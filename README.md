@@ -18,7 +18,7 @@ Funcionalidades Comprador:
 -Agregar Productos al carrito
 -Iniciar Sesion
 -Pago
-- Historial de compras
+-Historial de compras
 
 Funcionalidades Vendedor
 -Gestion de productos
