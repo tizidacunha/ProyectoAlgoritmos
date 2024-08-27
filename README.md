@@ -23,4 +23,4 @@ Funcionalidades Comprador:
 Funcionalidades Vendedor
 -Gestion de productos
 -Gestion de pedidos
--Estadisticas
+-Estadisticaso
