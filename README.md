@@ -12,15 +12,15 @@ Mateo Fares
 
 Funcionalidades:
 Funcionalidades Comprador:
--Comprar Productos
--Ver Productos
--Detalles de Productos
--Agregar Productos al carrito
--Iniciar Sesion
--Pago
--Historial de compras
+1. Comprar Productos
+2. Ver Productos
+3. Detalles de Productos
+4. Agregar Productos al carrito
+5. Iniciar Sesion
+6. Pago
+7. Historial de compras
 
 Funcionalidades Vendedor
--Gestion de productos
--Gestion de pedidos
--Estadisticas
+1. Gestion de productos
+2. Gestion de pedidos
+3. Estadisticas
