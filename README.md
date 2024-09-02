@@ -21,6 +21,8 @@ Funcionalidades Comprador:
 7. Historial de compras
 
 Funcionalidades Vendedor
-1. Gestion de productos
-2. Gestion de pedidos
-3. Estadisticas
+1. Agregar Productos
+2. Eliminar Productos
+3. Editar Productos
+4. Gestion de pedidos
+5. Estadisticas
