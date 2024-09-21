@@ -1,64 +1,64 @@
-#FUNCIONES DEL COMPRADOR
-
 producto = [["Manzana", 10, 100], ["Pera", 5, 25], ["Sprite", 4, 1000]]
-banco = 0
-#Actualmente se utiliza una lista en lista, luego se usara diccionarios y finalmente se usaran archivos!!!
+historial_compra = [[("Manzana", 2), ("Pera", 2), "tizidac2004"]]
+usuario_contrasena = [{"usuario": "tizidac2004", "contrasena": "admin"}]
+
+
+def Recomendar_productos(compras_realizadas, usuario):
+    recomendar_productos = []
+    for compra in historial_compra:
+        if compra[-1] == usuario:
+            for item in compra[:-1]:
+                producto = item[0] 
+                if producto not in compras_realizadas and producto not in recomendar_productos:  
+                    recomendar_productos.append(producto)
+
+    return recomendar_productos
 
 
 
-def comprar_producto(banco):
+
+def comprar_producto(banco ,producto):
     nombre = input("Ingrese el nombre del producto que quiera comprar o -1 para terminar: ")
+    compras_realizadas = [] 
+    
     while nombre != "-1":
-        encontrado = False #Variable bandera para saber si el producto esta o no en la lista
+        encontrado = False
         for i in producto:
             if i[0] == nombre:
+                encontrado = True
                 
-                encontrado = True  #Si se encontro el producto ya se le cambia el valor a la variable
+                cantidad_compra = int(input("¿Cuánto desea comprar? "))
+                while cantidad_compra < 1:
+                    print("Ingrese un valor válido.")
+                    cantidad_compra = int(input("¿Cuánto desea comprar? "))
                 
-                cantidad_compra = int(input("Cuanto desea comprar? "))
-                while cantidad_compra < 1: #por si la cantidad de productos es negativa
-                    print("Ingrese un valor valido ")
-                    cantidad_compra = int(input("Cuanto desea comprar? "))
+                if cantidad_compra < i[1]:
+                    i[1] -= cantidad_compra
+                    banco += i[2] * cantidad_compra
+                    compras_realizadas.append((i[0], cantidad_compra))
                 
-                if cantidad_compra < i[1]: #Compra menos del stock dispo
-                    i[1] = i[1] - cantidad_compra #Se actualiza la cantidad de stock (i[1]) ya que el stock era mayor
-                    banco = i[2] * cantidad_compra  #Se suma el dinero cobrado en el banco
+                elif cantidad_compra == i[1]:
+                    banco += i[2] * i[1]
+                    compras_realizadas.append((i[0], i[1]))
+                    del producto[producto.index(i)]
                     
-                elif cantidad_compra == i[1]: #Si compra justo la cantidad que habia en stock
-                    contador = 0  #variable contador para borrar el producto
-                    for i in producto:
-                        if i[0] == nombre:  #Busca el producto pedido
-                            banco += i[2] * i[1]  #Suma al banco el dinero cobrado
-                            del producto[contador]  #Borra el producto de la lista ya que se agoto el stock
-                            
-                        contador += 1  #el contador seguira sumando hasta que i[0] sea igual al nombre
+                else:
+                    print(f"Solo tenemos disponible en stock {i[1]}.")
+                    accion = input("¿Desea comprar lo disponible? Ingrese 'si' o 'no': ")
                     
-                    
-                else: #si solicita mas cantidad que el stock maximo
-                    
-                    print("Solo tenemos disponible en stock", i[1]) 
-                    accion = input("Desea comprar lo disponible, ingrese si o no: ")
-                    
-                    if accion == "si" or accion == "Si":
-                        contador = 0
-                        for i in producto:  #funciona de la misma forma que el elif anterior
-                            if i[0] == nombre: 
-                                banco += i[2] * i[1]
-                                del producto[contador]
-                                
-                            contador += 1
-                        
+                    if accion.lower() == "si":
+                        banco += i[2] * i[1]
+                        compras_realizadas.append((i[0], i[1]))
+                        del producto[producto.index(i)]
                     else:
-                        print("Gracias, Vuelva pronto!! ")
-
+                        print("Gracias, ¡Vuelva pronto!")
         
-        if encontrado == False:  #Si se ingreso un producto que no estaba en la lista
-            print("Producto no encontrado ingrese otro")
+        if not encontrado:
+            print("Producto no encontrado, ingrese otro.")
 
         nombre = input("Ingrese el nombre del producto que quiera comprar o -1 para terminar: ")
     
-    return banco  #devuelve el valor que se ha cobrado en el banco
-   
+
 
 def ver_productos():
     print()
@@ -79,9 +79,62 @@ def agregar_producto_carrito():
     #Estos pueden ser modificados dentro de este
     pass
 
-def iniciar_sesion():
-    #Esta funcion permitira que el comprador inicie sesion para que guarden los productos en el carrito, haya una recomendacion de productos ya comprados
-    pass
+def iniciar_sesion(compras_realizadas, usuario):
+    crear_iniciar = input("Desea crear cuenta (1) o iniciar sesion (2). -1 para finalizar ? ")
+
+    if crear_iniciar == "1":
+        usuario = validar_usuario()
+        contrasena = input("Ingrese su contrasena: ")
+        
+        usuario_contrasena.append({"usuario": usuario, "contrasena": contrasena})
+        historial_compra.append([*compras_realizadas, usuario]) 
+        print(f"Su cuenta ha sido creada con el usuario: {usuario}")
+
+    elif crear_iniciar == "2":
+        usuario = input("Ingrese su nombre de usuario: ")
+        contrasena = input("Ingrese su contrasena: ")
+        
+        for credenciales in usuario_contrasena:
+            if credenciales["usuario"] == usuario and credenciales["contrasena"] == contrasena:
+                print("¡Bienvenido!")
+                historial_compra.append([*compras_realizadas, usuario])
+                
+
+
+                productos_recomendados = Recomendar_productos(usuario=usuario, compras_realizadas=compras_realizadas)
+                print("Productos que podrías considerar comprar nuevamente:")
+                for producto in productos_recomendados:
+                    if producto not in [compra[0] for compra in compras_realizadas]:
+                        print(f"- {producto}")
+
+def validar_usuario():
+    valido = False
+    while valido == False:
+        valido = True 
+        usuario = input("Ingrese su nombre de usuario: ")
+
+        for i in usuario_contrasena:
+                if i["usuario"] == usuario :
+                    print("Este usuario ya se encuentra")
+                    valido = False
+
+        if len(usuario) > 20:
+            print("tiene que tener menos caracteres ")
+            valido = False
+
+        if len(usuario) < 5:
+            print("tiene que tener mas caracteres ")
+            valido = False
+
+        caracteres_especiales = ["!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "-", "_", "=", "+", "{", "}", "[", "]", "|", "\\", ":", ";", "'", "\"", "<", ">", ",", ".", "?", "/"]
+
+        for i in usuario:
+            if i in caracteres_especiales:
+                print("no puede contener caracteres especiales el usuario ")
+                valido = False
+
+    return usuario
+
 
 def pago():
     #Esta funcion permitira que el comprador pague al finalizar la compra (efectivo o otro metodo de pago)
@@ -91,3 +144,8 @@ def pago():
 def historial_compras():
     #Esta funcion permitira que el comprador tenga un registro de sus compras y las pueda volver a repetir
     pass
+
+
+
+comprar_producto(banco=0, producto=producto)
+# iniciar_sesion(compras_realizadas=["Manzana"], usuario="tizidac2004")
