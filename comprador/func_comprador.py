@@ -181,7 +181,7 @@ def iniciar_sesion(compras_realizadas, usuario):
 
     if crear_iniciar == "1":
         usuario = validar_usuario()
-        contrasena = input("Ingrese su contrasena: ")
+        contrasena = validar_contraseña()
         
         usuario_contrasena.append({"usuario": usuario, "contrasena": contrasena})
         historial_compra.append([*compras_realizadas, usuario]) 
@@ -212,32 +212,87 @@ def iniciar_sesion(compras_realizadas, usuario):
 
 
 def validar_usuario():
-    valido = False
+    caracteres_especiales = ["!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "-", "_", "=", "+", "{", "}", "[", "]", "|", "\\", ":", ";", "'", "\"", "<", ">", ",", ".", "?", "/"]
+
+    valido = False 
     while valido == False:
         valido = True 
+
+        #Se ingresa el nombre de usuario
         usuario = input("Ingrese su nombre de usuario: ")
 
-        for i in usuario_contrasena:
-                if i["usuario"] == usuario :
-                    print("Este usuario ya se encuentra")
-                    valido = False
+        #Se valida que el usuario ya no se encuentre creado
+        for i in usuarios:
+            if i["usuario"] == usuario :
+                print("Este usuario ya se encuentra")
+                valido = False
 
+        #Se valida que la cantidad maxima de caracteres sea 20
         if len(usuario) > 20:
             print("tiene que tener menos caracteres ")
             valido = False
 
-        if len(usuario) < 5:
+        #Se valida que la cantidad minima de caracteres sea 8
+        if len(usuario) < 8:
             print("tiene que tener mas caracteres ")
             valido = False
 
-        caracteres_especiales = ["!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "-", "_", "=", "+", "{", "}", "[", "]", "|", "\\", ":", ";", "'", "\"", "<", ">", ",", ".", "?", "/"]
-
+        #Se valida que el usuario solo contenga letras o numeros
         for i in usuario:
             if i in caracteres_especiales:
                 print("no puede contener caracteres especiales el usuario ")
                 valido = False
 
     return usuario
+
+
+
+def validar_contraseña():
+    valido = False 
+    contador_caracteres = 0
+    contador_mayusculas = 0
+    contador_numeros = 0
+    caracteres_especiales = ["!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "-", "_", "=", "+", "{", "}", "[", "]", "|", "\\", ":", ";", "'", "\"", "<", ">", ",", ".", "?", "/"]
+
+
+    while not valido:
+        valido = True 
+
+        contrasena = input("Ingrese su contraseña de usuario: ")
+
+        #Valido que la contraseña tenga menos de 20 caracteres
+        if len(contrasena) > 20:
+            print("La contraseña tiene que tener menos de 20 caracteres.")
+            valido = False
+
+        #Valido que la contraseña tenga mas de 8 caracteres
+        if len(contrasena) < 8:
+            print("La contraseña tiene que tener al menos 5 caracteres.")
+            valido = False
+
+        #Valido la cantidad de caracteres especiales, mayusculas y numeros 
+        for i in contrasena:
+            if i in caracteres_especiales:
+                contador_caracteres += 1
+            if i.isalpha() and i.isupper():
+                contador_mayusculas += 1
+            if i.isalnum():
+                contador_numeros += 1
+
+
+        if contador_caracteres < 2:
+            print("La contraseña tiene que contener al menos 2 caracteres especiales.")
+            valido = False
+
+        if contador_mayusculas < 1:
+            print("La contraseña tiene que contener al menos 1 letra mayúscula.")
+            valido = False
+
+        if contador_numeros < 1:
+            print("La contraseña tiene que contener al menos 1 numero.")
+            valido = False
+
+    return contrasena
 
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
