@@ -26,7 +26,7 @@ def Recomendar_productos(compras_realizadas, usuario):
 
 
 
-def comprar_producto(banco ,producto):
+def comprar_producto(pago ,producto):
     nombre = input("Ingrese el nombre del producto que quiera comprar o -1 para terminar: ")
     compras_realizadas = [] 
     
@@ -43,11 +43,11 @@ def comprar_producto(banco ,producto):
                 
                 if cantidad_compra < i[1]:
                     i[1] -= cantidad_compra
-                    banco += i[2] * cantidad_compra
+                    pago += i[2] * cantidad_compra
                     compras_realizadas.append((i[0], cantidad_compra))
                 
                 elif cantidad_compra == i[1]:
-                    banco += i[2] * i[1]
+                    pago += i[2] * i[1]
                     compras_realizadas.append((i[0], i[1]))
                     del producto[producto.index(i)]
                     
@@ -56,7 +56,7 @@ def comprar_producto(banco ,producto):
                     accion = input("¿Desea comprar lo disponible? Ingrese 'si' o 'no': ")
                     
                     if accion.lower() == "si":
-                        banco += i[2] * i[1]
+                        pago += i[2] * i[1]
                         compras_realizadas.append((i[0], i[1]))
                         del producto[producto.index(i)]
                     else:
@@ -67,7 +67,7 @@ def comprar_producto(banco ,producto):
 
         nombre = input("Ingrese el nombre del producto que quiera comprar o -1 para terminar: ")
     
-    return compras_realizadas
+    return compras_realizadas, pago
 
 
 
@@ -168,7 +168,7 @@ def gestionar_carrito(carrito):
             print("Opción no válida. Intente de nuevo.")
 
 
-gestionar_carrito(carrito)
+# gestionar_carrito(carrito)
 
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -181,7 +181,7 @@ def iniciar_sesion(compras_realizadas, usuario):
 
     if crear_iniciar == "1":
         usuario = validar_usuario()
-        contrasena = input("Ingrese su contrasena: ")
+        contrasena = validar_contraseña()
         
         usuario_contrasena.append({"usuario": usuario, "contrasena": contrasena})
         historial_compra.append([*compras_realizadas, usuario]) 
@@ -212,26 +212,32 @@ def iniciar_sesion(compras_realizadas, usuario):
 
 
 def validar_usuario():
-    valido = False
+    caracteres_especiales = ["!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "-", "_", "=", "+", "{", "}", "[", "]", "|", "\\", ":", ";", "'", "\"", "<", ">", ",", ".", "?", "/"]
+
+    valido = False 
     while valido == False:
         valido = True 
+
+        #Se ingresa el nombre de usuario
         usuario = input("Ingrese su nombre de usuario: ")
 
+        #Se valida que el usuario ya no se encuentre creado
         for i in usuario_contrasena:
-                if i["usuario"] == usuario :
-                    print("Este usuario ya se encuentra")
-                    valido = False
+            if i["usuario"] == usuario :
+                print("Este usuario ya se encuentra")
+                valido = False
 
+        #Se valida que la cantidad maxima de caracteres sea 20
         if len(usuario) > 20:
             print("tiene que tener menos caracteres ")
             valido = False
 
-        if len(usuario) < 5:
+        #Se valida que la cantidad minima de caracteres sea 8
+        if len(usuario) < 8:
             print("tiene que tener mas caracteres ")
             valido = False
 
-        caracteres_especiales = ["!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "-", "_", "=", "+", "{", "}", "[", "]", "|", "\\", ":", ";", "'", "\"", "<", ">", ",", ".", "?", "/"]
-
+        #Se valida que el usuario solo contenga letras o numeros
         for i in usuario:
             if i in caracteres_especiales:
                 print("no puede contener caracteres especiales el usuario ")
@@ -239,16 +245,108 @@ def validar_usuario():
 
     return usuario
 
+
+
+def validar_contraseña():
+    valido = False 
+    contador_caracteres = 0
+    contador_mayusculas = 0
+    contador_numeros = 0
+    caracteres_especiales = ["!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "-", "_", "=", "+", "{", "}", "[", "]", "|", "\\", ":", ";", "'", "\"", "<", ">", ",", ".", "?", "/"]
+
+
+    while not valido:
+        valido = True 
+
+        contrasena = input("Ingrese su contraseña de usuario: ")
+
+        #Valido que la contraseña tenga menos de 20 caracteres
+        if len(contrasena) > 20:
+            print("La contraseña tiene que tener menos de 20 caracteres.")
+            valido = False
+
+        #Valido que la contraseña tenga mas de 8 caracteres
+        if len(contrasena) < 8:
+            print("La contraseña tiene que tener al menos 5 caracteres.")
+            valido = False
+
+        #Valido la cantidad de caracteres especiales, mayusculas y numeros 
+        for i in contrasena:
+            if i in caracteres_especiales:
+                contador_caracteres += 1
+            if i.isalpha() and i == i.upper():
+                contador_mayusculas += 1
+            if i.isalnum():
+                contador_numeros += 1
+
+
+        if contador_caracteres < 2:
+            print("La contraseña tiene que contener al menos 2 caracteres especiales.")
+            valido = False
+
+        if contador_mayusculas < 1:
+            print("La contraseña tiene que contener al menos 1 letra mayúscula.")
+            valido = False
+
+        if contador_numeros < 1:
+            print("La contraseña tiene que contener al menos 1 numero.")
+            valido = False
+
+    return contrasena
+
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+_, dinero =comprar_producto(pago=0, producto=producto)
 
-def pago():
-    #Esta funcion permitira que el comprador pague al finalizar la compra (efectivo o otro metodo de pago)
-    pass
+def validar_tarjeta(tarjeta):
+
+    # Validar que la tarjeta tenga 16 dígitos
+    if len(tarjeta) == 16:
+        return True
+    else:
+        return False
+    #En el futuro armar mas validaciones
+
+    
+def pago(monto_total):
+    print(f"El monto total es: ${monto_total}")
+    print("Selecciona el metodo de pago:")
+    print("1. Tarjeta")
+    print("2. Transferencia bancaria")
+
+    opcion = input("Ingresa el numero de la opcion elegida: ")
+
+    if opcion == "1":
+        print("Elegiste pagar con tarjeta.")
+        tarjeta_valido = False
+        while tarjeta_valido == False:
+            tarjeta_valido = True
+
+            tarjeta = int(input("Ingresa tu numero de tarjeta (16 dígitos): "))
+
+            if validar_tarjeta(tarjeta):
+                print(f"Se cobro ${monto_total} en tu tarjeta.")
+            else:
+                print("Numero de tarjeta invalido. Intente nuevamente.")
+                tarjeta_valido = False
 
 
+    elif opcion == "2":
+        print("Elegiste pagar con transferencia bancaria.")
+        cuenta = input("Ingresa tu número de cuenta: ")
+
+        descuento = monto_total * 0.10
+        monto_con_descuento = monto_total - descuento
+        print(f"Recibiste un descuento del 10%. El monto final es: ${monto_con_descuento}")
+
+    else:
+        print("Opcion invalida. Intentalo de nuevo.")
+        pago(monto_total)
+
+
+pago(monto_total=100)
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -257,6 +355,7 @@ def pago():
 
 def historial_compras():
     #Esta funcion permitira que el comprador tenga un registro de sus compras y las pueda volver a repetir
+    #Para esta funcion se necesita tener un archivo de datos, algo que agregaremos para la segunda entrega
     pass
 
 
