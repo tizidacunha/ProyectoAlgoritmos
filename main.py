@@ -52,21 +52,29 @@ def main():
 
 
     rol = input("Ingrese quien sos: comprador o admin: ")
-    while rol != "comprador" and rol != "Comprador" and rol != "Admin" and rol != "admin":
+    rol = rol.capitalize()
+    
+    while rol != "Comprador" and rol != "Admin" and not (rol.isalpha):
         print("Rol Invalido! ")
-        rol = input("Ingrese un rol valido: comprador o admin: ")
+        rol = input("Ingrese un rol valido: Comprador o Admin: ")
         
     while accion != -1:
 
-        if rol == "comprador" or rol == "Comprador":
+        if rol == "Comprador":
             menu_comprador()
             
-            accion = int(input("Que desea hacer ? o ingrese -1 para terminar: "))
-            while accion != -1 and not (accion >= 1 and accion <= 5):
-                print("Ingrese una accion valida")
-                accion = int(input("Que desea hacer ? o ingrese -1 para terminar: "))
+            ingreso_numero = True
+            while ingreso_numero:
+                try:
+                    accion = int(input("Que desea hacer ? o ingrese -1 para terminar: "))
+                    while accion != -1 and not (accion >= 1 and accion <= 5):
+                        print("Ingrese una accion valida")
+                        accion = int(input("Que desea hacer ? o ingrese -1 para terminar: "))
+                    ingreso_numero = False
+                except ValueError:
+                    print("Ingrese un numero del 1 al 5")
 
-            while rol != "admin" and rol != "Admin" and accion != -1: 
+            while rol != "Admin" and accion != -1: 
             
                 if accion == 1:
                     comprar_producto()
@@ -79,18 +87,24 @@ def main():
                 elif accion == 4:
                     historial_compras()
                 elif accion == 5:
-                    rol = "admin"
+                    rol = "Admin"
                 
                 if accion != 5 and accion != -1:
                     menu_comprador()
-                    accion = int(input("Que desea hacer? o ingrese -1 para terminar: "))
-                    while (accion < 1 or accion > 6) and (accion != -1):
-                        print("Ingrese una accion valida")
-                        accion = int(input("Que desea hacer ? o ingrese -1 para terminar: "))
                     
+                    ingreso_numero = True
+                    while ingreso_numero:
+                        try:
+                            accion = int(input("Que desea hacer? o ingrese -1 para terminar: "))
+                            while (accion < 1 or accion > 6) and (accion != -1):
+                                print("Ingrese una accion valida")
+                                accion = int(input("Que desea hacer ? o ingrese -1 para terminar: "))
+                            ingreso_numero = False
+                        except ValueError:
+                            print("Ingres una opcion del 1 al 5")
                 
                 
-        elif rol == "admin" or rol == "Admin":
+        elif rol == "Admin":
 
             contador = 0
             clave = input("Ingrese la clave: ")
@@ -104,12 +118,18 @@ def main():
 
                 menu_vendedor()
 
-                accion = int(input("Que desea hacer ? o ingrese -1 para terminar: "))
-                while (accion < 1 or accion > 7) and (accion != -1):
-                    print("Ingrese una accion valida")
-                    accion = int(input("Que desea hacer ? o ingrese -1 para terminar: "))
-
-                while accion >= 1 and accion <= 7 and rol != "comprador" and rol != "Comprador":
+                ingreso_numero = True
+                while ingreso_numero:
+                    try:
+                        accion = int(input("Que desea hacer ? o ingrese -1 para terminar: "))
+                        while (accion < 1 or accion > 7) and (accion != -1):
+                            print("Ingrese una accion valida")
+                            accion = int(input("Que desea hacer ? o ingrese -1 para terminar: "))
+                        ingreso_numero = False
+                    except ValueError:
+                        print("Ingrese una opcion del 1 al 7")
+                    
+                while accion >= 1 and accion <= 7 and rol != "Comprador":
                     
                 
                     if accion == 1:
@@ -135,10 +155,18 @@ def main():
                 
                     if accion != 7 and accion != -1:
                         menu_vendedor()
-                        accion = int(input("Que desea hacer? o ingrese -1 para terminar: "))
-                        while (accion < 1 or accion > 7) and (accion != -1):
-                            print("Ingrese una accion valida")
-                            accion = int(input("Que desea hacer ? o ingrese -1 para terminar: "))
+                        
+                        ingreso_numero = True
+                        while ingreso_numero:
+                            try:
+                                accion = int(input("Que desea hacer? o ingrese -1 para terminar: "))
+                                while (accion < 1 or accion > 7) and (accion != -1):
+                                    print("Ingrese una accion valida")
+                                    accion = int(input("Que desea hacer ? o ingrese -1 para terminar: "))
+                                ingreso_numero = False
+                            except ValueError:
+                                print("Ingrese una opcion valida")
+                                
             else:
                 print("Ladron!! ")
                 accion = -1                
