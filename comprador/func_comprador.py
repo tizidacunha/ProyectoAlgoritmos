@@ -306,7 +306,7 @@ def validar_tarjeta():
     opcion = ""
     numero_tarjeta = input("Ingrese el numero de su tarjeta: ")
 
-    while opcion != "efectivo" and opcion != "transferencia" and opcion != "tarjeta":
+    while opcion != "transferencia" and opcion != "tarjeta":
 
         if numero_tarjeta[0] == "4" and (len(numero_tarjeta) == 13 or len(numero_tarjeta) == 16):
             tarjeta = "Visa"
@@ -339,15 +339,13 @@ def validar_tarjeta():
 Los datos de la tarjeta que ingreso son incorrectos:
 Desea:
 (1) Ingresar otros datos de tarjeta
-(2) Pagar con efectivo
-(3)Pagar con transferencia: '''))
-            
+(2)Pagar con transferencia: '''))
+
+            while opcion !=1 or opcion !=2:
+                opcion = int(input("Ingresa una opcion correcta))
+                                   
             if opcion == 1:
                 numero_tarjeta = input("Ingrese el numero de su tarjeta: ")
-            elif opcion == 2:
-                print("Paga en efectivo")#pagar_efectivo()
-                opcion = "efectivo"
-                tarjeta = None
             else:
                 print("Paga con transferencia")#pagar_transferencia()
                 opcion = "tranferencia"
@@ -355,12 +353,16 @@ Desea:
 
     return opcion, tarjeta
 
+#----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
+def calcular_descuento(monto_total, descuento):
+    descuento = monto_total * descuento #0.10
+    monto_con_descuento = monto_total - descuento
+    return monto_con_descuento
 
-
-
-    
 def pago(monto_total):
     print(f"El monto total es: ${monto_total}")
     print("Selecciona el metodo de pago:")
@@ -371,33 +373,36 @@ def pago(monto_total):
 
     if opcion == "1":
         print("Elegiste pagar con tarjeta.")
-        tarjeta_valido = False
-        while tarjeta_valido == False:
-            tarjeta_valido = True
+        print("Te contamos que pagando con tarjeta Visa tienes un 5% de decuento y pagando con MasterCard tienes un 10%")
+        tipo_pago, tipo_tarjeta = validar_tarjeta()
+        if tipo_pago == "tarjeta":
+            if tipo_tarjeta == "Visa":
 
-            tarjeta = int(input("Ingresa tu numero de tarjeta (16 dígitos): "))
-
-            if validar_tarjeta(tarjeta):
-                print(f"Se cobro ${monto_total} en tu tarjeta.")
-            else:
-                print("Numero de tarjeta invalido. Intente nuevamente.")
-                tarjeta_valido = False
+                print(f"Se cobró ${calcular_descuento(monto_total, descuento= 0.05)} en tu tarjeta Visa.")
+            elif tipo_tarjeta == "MasterCard":
+                print(f"Se cobró ${calcular_descuento(monto_total, descuento= 0.10)} en tu tarjeta MasterCard.")
+        else:
+            opcion = "2"
 
 
-    elif opcion == "2":
+    if opcion == "2":
         print("Elegiste pagar con transferencia bancaria.")
         cuenta = input("Ingresa tu número de cuenta: ")
+        while len(cuenta) != 22:
+            print("Ingresa un numero de cuenta correcto")
+            cuenta = input("Ingresa tu número de cuenta: ")
 
-        descuento = monto_total * 0.10
-        monto_con_descuento = monto_total - descuento
-        print(f"Recibiste un descuento del 10%. El monto final es: ${monto_con_descuento}")
+        print(f"Recibiste un descuento del 20%. El monto final es: ${calcular_descuento(monto_total, descuento= 0.20)}")
 
     else:
         print("Opcion invalida. Intentalo de nuevo.")
         pago(monto_total)
 
 
-pago(monto_total=100)
+
+
+    
+
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
