@@ -342,7 +342,7 @@ Desea:
 (2)Pagar con transferencia: '''))
 
             while opcion !=1 or opcion !=2:
-                opcion = int(input("Ingresa una opcion correcta))
+                opcion = int(input("Ingresa una opcion correcta"))
                                    
             if opcion == 1:
                 numero_tarjeta = input("Ingrese el numero de su tarjeta: ")
