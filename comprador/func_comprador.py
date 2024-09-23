@@ -300,14 +300,65 @@ def validar_contraseña():
 
 _, dinero =comprar_producto(pago=0, producto=producto)
 
-def validar_tarjeta(tarjeta):
 
-    # Validar que la tarjeta tenga 16 dígitos
-    if len(tarjeta) == 16:
-        return True
-    else:
-        return False
-    #En el futuro armar mas validaciones
+
+def validar_tarjeta():
+    opcion = ""
+    numero_tarjeta = input("Ingrese el numero de su tarjeta: ")
+
+    while opcion != "efectivo" and opcion != "transferencia" and opcion != "tarjeta":
+
+        if numero_tarjeta[0] == "4" and (len(numero_tarjeta) == 13 or len(numero_tarjeta) == 16):
+            tarjeta = "Visa"
+            validar = True
+        elif numero_tarjeta[0:2] in ['51', '52', '53', '54', '55'] and len(numero_tarjeta) == 16:
+            tarjeta = "MasterCard"
+            validar = True
+        else:
+            validar = False
+
+        fecha_vencimiento = input("Ingrese la fecha de vencimiento MM/AAAA: ")
+        fecha_hoy = "09/2024"
+
+        if int(fecha_hoy[3:7]) > int(fecha_vencimiento[3:7]): 
+            print("tarjeta vencida")
+            validar = False
+        elif int(fecha_hoy[3:7]) == int(fecha_vencimiento[3:7]) and int(fecha_hoy[0:2]) > int(fecha_vencimiento[0:2]):
+            print("tarjeta vencida por mes")
+            validar = False
+
+        cvv = int(input("Ingrese el codigo de seguridad: "))
+        if cvv < 0 or cvv > 999:
+            print("codigo de seguridad incorrecto")
+            validar = False
+        
+        if validar == True:
+            opcion = "tarjeta"
+        elif validar == False:
+            opcion = int(input('''
+Los datos de la tarjeta que ingreso son incorrectos:
+Desea:
+(1) Ingresar otros datos de tarjeta
+(2) Pagar con efectivo
+(3)Pagar con transferencia: '''))
+            
+            if opcion == 1:
+                numero_tarjeta = input("Ingrese el numero de su tarjeta: ")
+            elif opcion == 2:
+                print("Paga en efectivo")#pagar_efectivo()
+                opcion = "efectivo"
+                tarjeta = None
+            else:
+                print("Paga con transferencia")#pagar_transferencia()
+                opcion = "tranferencia"
+                tarjeta = None
+
+    return opcion, tarjeta
+
+
+
+
+
 
     
 def pago(monto_total):
