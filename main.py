@@ -10,9 +10,6 @@ contrasena = "admin"
 
 
 
-
-
-
                       
 def menu_vendedor():
     print()
@@ -26,7 +23,7 @@ def menu_vendedor():
     4. Eliminar Producto
     5. Estadisticas
     6. Gestionar pedidos
-    6. Ir a Comprador''')
+    7. Ir a Comprador''')
     print("-----------------------------------------------------------------------------------------------------------------------------")
     
 
@@ -42,7 +39,7 @@ def menu_comprador():
     3. Detalles de Productos
     4. Carrito / inciar sesion / Pago
     5. Historial Compra
-    3. Ir a Administrador''')
+    6. Ir a Administrador''')
     print("-----------------------------------------------------------------------------------------------------------------------------")
    
                  
@@ -67,12 +64,12 @@ def main():
             while ingreso_numero:
                 try:
                     accion = int(input("Que desea hacer ? o ingrese -1 para terminar: "))
-                    while accion != -1 and not (accion >= 1 and accion <= 5):
+                    while accion != -1 and not (accion >= 1 and accion <= 6):
                         print("Ingrese una accion valida")
                         accion = int(input("Que desea hacer ? o ingrese -1 para terminar: "))
                     ingreso_numero = False
                 except ValueError:
-                    print("Ingrese un numero del 1 al 5")
+                    print("Ingrese un numero del 1 al 6")
 
             while rol != "Admin" and accion != -1: 
             
@@ -80,16 +77,16 @@ def main():
                     comprar_producto()
                 elif accion == 2:
                     ver_productos()
-                elif accion == 2:
-                    detalles_productos()
                 elif accion == 3:
-                    gestionar_carrito()
+                    detalles_productos()
                 elif accion == 4:
-                    historial_compras()
+                    gestionar_carrito()
                 elif accion == 5:
+                    historial_compras()
+                elif accion == 6:
                     rol = "Admin"
                 
-                if accion != 5 and accion != -1:
+                if accion != 6 and accion != -1:
                     menu_comprador()
                     
                     ingreso_numero = True
@@ -101,7 +98,7 @@ def main():
                                 accion = int(input("Que desea hacer ? o ingrese -1 para terminar: "))
                             ingreso_numero = False
                         except ValueError:
-                            print("Ingres una opcion del 1 al 5")
+                            print("Ingres una opcion del 1 al 6")
                 
                 
         elif rol == "Admin":
@@ -173,6 +170,3 @@ def main():
                 
 
 main()
-
-
-
