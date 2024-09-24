@@ -17,6 +17,7 @@ def menu_vendedor():
     print("Bienvenido al E-Commerc!!! ")
     print("")
     print('''Estas son las opciones disponibles: 
+          
     1. Agregar un producto:
     2. Ver Stock       
     3. Editar Producto
