@@ -1,7 +1,7 @@
 producto = [["Manzana", 10, 100], ["Pera", 5, 25], ["Sprite", 4, 1000]]
 historial_compra = [[("Manzana", 2), ("Pera", 2), "tizidac2004"]]
 usuario_contrasena = [{"usuario": "tizidac2004", "contrasena": "admin"}]
-
+import re
 
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -238,10 +238,9 @@ def validar_usuario():
             valido = False
 
         #Se valida que el usuario solo contenga letras o numeros
-        for i in usuario:
-            if i in caracteres_especiales:
-                print("no puede contener caracteres especiales el usuario ")
-                valido = False
+        if not re.match("^[a-zA-Z0-9]+$",usuario):
+            print("El nombre del usuario solo puede contener letras y numeros, sin caracteres especiales.")
+            valido = False
 
     return usuario
 
@@ -298,7 +297,7 @@ def validar_contraseña():
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-_, dinero =comprar_producto(pago=0, producto=producto)
+#_, dinero =comprar_producto(pago=0, producto=producto)
 
 
 
