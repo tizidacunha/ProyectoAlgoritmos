@@ -200,10 +200,14 @@ def estadisticas(mas_vendido,menos_vendido,banco,lista):
             "Menor stock":menor_stock
         }
         
+        print("")
         estadisticas.update(precios_y_stocks)
         
     except IndexError:
         print("No hay productos en el almacen")
+    
+    for clave,valor in estadisticas.items():
+        print(clave,";",valor)
     
     return estadisticas
 

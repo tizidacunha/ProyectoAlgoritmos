@@ -1,7 +1,9 @@
 producto = [["Manzana", 10, 100], ["Pera", 5, 25], ["Sprite", 4, 1000]]
-historial_compra = [[("Manzana", 2), ("Pera", 2), "tizidac2004"]]
+historial_compra = [[["Manzana", 2], ["Pera", 2], "tizidac2004"]]
 usuario_contrasena = [{"usuario": "tizidac2004", "contrasena": "admin"}]
+compras_realizadas = ["Manzana"]
 import re
+
 
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -9,24 +11,17 @@ import re
 
 
 def Recomendar_productos(compras_realizadas, usuario):
-    recomendar_productos = []
-    for compra in historial_compra:
-        if compra[-1] == usuario:
-            for item in compra[:-1]:
-                producto = item[0] 
-                if producto not in compras_realizadas and producto not in recomendar_productos:  
-                    recomendar_productos.append(producto)
 
+    recomendar_productos = [item[0] for compra in historial_compra if compra[-1] == usuario for item in compra[:-1] if item[0] not in compras_realizadas]
+    
     return recomendar_productos
 
-
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 
-def comprar_producto(pago ,producto):
+def comprar_producto(dinero ,producto):
     nombre = input("Ingrese el nombre del producto que quiera comprar o -1 para terminar: ")
     compras_realizadas = [] 
     
@@ -43,11 +38,11 @@ def comprar_producto(pago ,producto):
                 
                 if cantidad_compra < i[1]:
                     i[1] -= cantidad_compra
-                    pago += i[2] * cantidad_compra
+                    dinero += i[2] * cantidad_compra
                     compras_realizadas.append((i[0], cantidad_compra))
                 
                 elif cantidad_compra == i[1]:
-                    pago += i[2] * i[1]
+                    dinero += i[2] * i[1]
                     compras_realizadas.append((i[0], i[1]))
                     del producto[producto.index(i)]
                     
@@ -56,7 +51,7 @@ def comprar_producto(pago ,producto):
                     accion = input("¿Desea comprar lo disponible? Ingrese 'si' o 'no': ")
                     
                     if accion.lower() == "si":
-                        pago += i[2] * i[1]
+                        dinero += i[2] * i[1]
                         compras_realizadas.append((i[0], i[1]))
                         del producto[producto.index(i)]
                     else:
@@ -67,7 +62,7 @@ def comprar_producto(pago ,producto):
 
         nombre = input("Ingrese el nombre del producto que quiera comprar o -1 para terminar: ")
     
-    return compras_realizadas, pago
+    return compras_realizadas, dinero
 
 
 
@@ -78,7 +73,7 @@ def comprar_producto(pago ,producto):
 
 
 
-def ver_productos():
+def ver_productos(producto):
     print()
     print("Productos: ")
     if producto == []:
@@ -100,13 +95,12 @@ def detalles_productos():
 # carrito = comprar_producto(banco=0, producto=producto)
 
 
-carrito = [("Manzana", 10)]
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-def gestionar_carrito(carrito):
+def gestionar_carrito(carrito, monto_total):
     opcion = 1
 
     if not carrito:
@@ -124,7 +118,8 @@ def gestionar_carrito(carrito):
         print("1. Modificar cantidad de un producto")
         print("2. Eliminar un producto del carrito")
         print("3. Vaciar el carrito")
-        print("4. Salir del gestor del carrito")
+        print("4. Pago")
+        print("5. Salir del gestor del carrito")
 
         opcion = input("\nSeleccione una opción (1-4): ")
         
@@ -161,9 +156,12 @@ def gestionar_carrito(carrito):
                 opcion = "4"  # Salir del carrito
         
         elif opcion == "4":
+            pago(monto_total)
+        
+        elif opcion == '5':
             # Salir del carrito
             print("Saliendo del gestor del carrito.")
-        
+            
         else:
             print("Opción no válida. Intente de nuevo.")
 
@@ -364,7 +362,13 @@ def calcular_descuento(monto_total, descuento):
 
 def pago(monto_total):
     print(f"El monto total es: ${monto_total}")
-    print("Selecciona el metodo de pago:")
+    opcion = input("Desea pagar? ").lower()
+    if opcion == "si":
+        print("Gracias por su compra!!")
+    else:
+        print("Vuelva pronto!!")
+        
+    '''print("Selecciona el metodo de pago:")
     print("1. Tarjeta")
     print("2. Transferencia bancaria")
 
@@ -396,7 +400,7 @@ def pago(monto_total):
     else:
         print("Opcion invalida. Intentalo de nuevo.")
         pago(monto_total)
-
+'''
 
 
 
@@ -409,10 +413,7 @@ def pago(monto_total):
 
 
 def historial_compras():
+    print("Proximamente...")
     #Esta funcion permitira que el comprador tenga un registro de sus compras y las pueda volver a repetir
     #Para esta funcion se necesita tener un archivo de datos, algo que agregaremos para la segunda entrega
     pass
-
-
-
-# iniciar_sesion(compras_realizadas=["Manzana"], usuario="tizidac2004")
