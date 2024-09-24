@@ -2,12 +2,12 @@
 
 #Aca se importaran todas las funciones del comprador y del vendedor
 
-from comprador.func_comprador import comprar_producto, ver_productos, detalles_productos, gestionar_carrito, historial_compras
+from comprador.func_comprador import comprar_producto, ver_productos, detalles_productos, gestionar_carrito, historial_compras, pago
 from vendedor.func_vendedor import Agregar_productos, Eliminar_productos, Editar_productos, Gestion_de_pedidos, estadisticas
-
-
+producto = [["Manzana", 10, 100], ["Pera", 5, 25], ["Sprite", 4, 1000]]
 contrasena = "admin"
-
+dinero = 0
+carrito = []
 
 
                       
@@ -46,13 +46,15 @@ def menu_comprador():
                  
 #ARRANCA EL MENU
 def main():
+    global carrito
+    global dinero
     accion = 0
 
 
     rol = input("Ingrese quien sos: comprador o admin: ")
     rol = rol.capitalize()
     
-    while rol != "Comprador" and rol != "Admin" and not (rol.isalpha):
+    while rol != "Comprador" and rol != "Admin" or not (rol.isalpha):
         print("Rol Invalido! ")
         rol = input("Ingrese un rol valido: Comprador o Admin: ")
         
@@ -75,13 +77,13 @@ def main():
             while rol != "Admin" and accion != -1: 
             
                 if accion == 1:
-                    comprar_producto()
+                    carrito, dinero = comprar_producto(dinero, producto)
                 elif accion == 2:
-                    ver_productos()
+                    ver_productos(producto)
                 elif accion == 3:
                     detalles_productos()
                 elif accion == 4:
-                    gestionar_carrito()
+                    gestionar_carrito(carrito=carrito,monto_total=dinero)
                 elif accion == 5:
                     historial_compras()
                 elif accion == 6:
@@ -131,18 +133,18 @@ def main():
                     
                 
                     if accion == 1:
-                        Agregar_productos()
+                        Agregar_productos(producto)
                         
                     elif accion == 2:
-                        ver_productos()
+                        ver_productos(producto)
                     
                     elif accion ==3:
-                        Editar_productos()
+                        Editar_productos(producto)
                     
                     elif accion == 4:
-                        Eliminar_productos()
+                        Eliminar_productos(producto)
                     elif accion == 5:
-                        estadisticas()
+                        estadisticas(mas_vendido="Manzana", menos_vendido="Pera", lista=producto, banco=dinero)
                     elif accion == 6:
                         Gestion_de_pedidos()
                     elif accion == 7:
