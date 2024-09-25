@@ -11,7 +11,8 @@ import re
 
 
 def Recomendar_productos(compras_realizadas, usuario):
-
+    """ Se corre la lista de historial de compras y se verifica si la ultima posicion de esta lista es igual al usuario, si 
+    es igual se itera las listas en la posicion 1 y se verifica si este nombre no esta en la listas de compras realizadas """
     recomendar_productos = [item[0] for compra in historial_compra if compra[-1] == usuario for item in compra[:-1] if item[0] not in compras_realizadas]
     
     return recomendar_productos
@@ -21,7 +22,7 @@ def Recomendar_productos(compras_realizadas, usuario):
 
 
 
-def comprar_producto(dinero ,producto):
+def comprar_producto(producto):
     nombre = input("Ingrese el nombre del producto que quiera comprar o -1 para terminar: ")
     compras_realizadas = [] 
     
@@ -37,23 +38,17 @@ def comprar_producto(dinero ,producto):
                     cantidad_compra = int(input("¿Cuánto desea comprar? "))
                 
                 if cantidad_compra < i[1]:
-                    i[1] -= cantidad_compra
-                    dinero += i[2] * cantidad_compra
-                    compras_realizadas.append((i[0], cantidad_compra))
+                    compras_realizadas.append([i[0], cantidad_compra, i[2]])
                 
                 elif cantidad_compra == i[1]:
-                    dinero += i[2] * i[1]
-                    compras_realizadas.append((i[0], i[1]))
-                    del producto[producto.index(i)]
+                    compras_realizadas.append([i[0], i[1], i[2]])
                     
                 else:
                     print(f"Solo tenemos disponible en stock {i[1]}.")
                     accion = input("¿Desea comprar lo disponible? Ingrese 'si' o 'no': ")
                     
                     if accion.lower() == "si":
-                        dinero += i[2] * i[1]
-                        compras_realizadas.append((i[0], i[1]))
-                        del producto[producto.index(i)]
+                        compras_realizadas.append([i[0], i[1], i[2]])
                     else:
                         print("Gracias, ¡Vuelva pronto!")
         
@@ -62,7 +57,7 @@ def comprar_producto(dinero ,producto):
 
         nombre = input("Ingrese el nombre del producto que quiera comprar o -1 para terminar: ")
     
-    return compras_realizadas, dinero
+    return compras_realizadas
 
 
 
@@ -86,95 +81,96 @@ def ver_productos(producto):
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
+#Se ultiliza en el 80%
 def detalles_productos():
     #Esta funcion permitira que el comprador vea unos detalles breves del producto que seleccione
     pass
 
 
-# carrito = comprar_producto(banco=0, producto=producto)
-
-
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-def gestionar_carrito(carrito, monto_total):
+def gestionar_carrito(carrito, monto_total, producto):
     opcion = 1
-
     if not carrito:
-        return print("El carrito está vacío.")
+        opcion = "5"
+        print("El carrito está vacío.")
     
-    while opcion != "4" :
-        print("\nCarrito actual:")
-
-        for i in range(len(carrito)):
-            print(f"{i+1}. {carrito[i][0]}: {carrito[i][1]} unidades")
-
-
-
-        print("\nOpciones del gestor del carrito:")
-        print("1. Modificar cantidad de un producto")
-        print("2. Eliminar un producto del carrito")
-        print("3. Vaciar el carrito")
-        print("4. Pago")
-        print("5. Salir del gestor del carrito")
-
-        opcion = input("\nSeleccione una opción (1-4): ")
-        
-        if opcion == "1":
-            # Modificar cantidad de un producto
-            numero_producto = int(input("Ingrese el número del producto que desea modificar: ")) - 1
-            if 0 <= numero_producto < len(carrito):
-                nueva_cantidad = int(input(f"Ingrese la nueva cantidad para {carrito[numero_producto][0]}: "))
-                if nueva_cantidad <= 0:
-                    print("Debe ingresar una cantidad válida mayor a 0.")
-                else:
-                    # Actualizar la cantidad en el carrito
-                    producto, _ = carrito[numero_producto]
-                    carrito[numero_producto] = (producto, nueva_cantidad)
-                    print(f"La cantidad de {producto} ha sido actualizada a {nueva_cantidad}.")
-            else:
-                print("Número de producto no válido.")
-        
-        elif opcion == "2":
-            # Eliminar un producto del carrito
-            numero_producto = int(input("Ingrese el número del producto que desea eliminar: ")) - 1
-            if 0 <= numero_producto < len(carrito):
-                producto_eliminado = carrito.pop(numero_producto)
-                print(f"{producto_eliminado[0]} ha sido eliminado del carrito.")
-            else:
-                print("Número de producto no válido.")
-        
-        elif opcion == "3":
-            # Vaciar el carrito
-            confirmar = input("¿Está seguro que desea vaciar el carrito? (si/no): ").lower()
-            if confirmar == "si":
-                carrito.clear()
-                print("El carrito ha sido vaciado.")
-                opcion = "4"  # Salir del carrito
-        
-        elif opcion == "4":
-            pago(monto_total)
-        
-        elif opcion == '5':
-            # Salir del carrito
-            print("Saliendo del gestor del carrito.")
-            
+    while opcion != "5" :
+        if not carrito:
+            print("El carrito está vacío.")
+            opcion = "5"
         else:
-            print("Opción no válida. Intente de nuevo.")
+            
+            print("\nCarrito actual:")
+
+            for i in range(len(carrito)):
+                print(f"{i+1}. {carrito[i][0]}: {carrito[i][1]} unidades")
 
 
-# gestionar_carrito(carrito)
+
+            print("\nOpciones del gestor del carrito:")
+            print("1. Modificar cantidad de un producto")
+            print("2. Eliminar un producto del carrito")
+            print("3. Vaciar el carrito")
+            print("4. Pago")
+            print("5. Salir del gestor del carrito")
+
+            opcion = input("\nSeleccione una opción (1-4): ")
+            
+            if opcion == "1":
+                # Modificar cantidad de un producto
+                numero_producto = int(input("Ingrese el número del producto que desea modificar: ")) - 1
+                if 0 <= numero_producto < len(carrito):   
+                    nueva_cantidad = int(input(f"Ingrese la nueva cantidad para {carrito[numero_producto][0]}: "))
+                    if nueva_cantidad <= 0:
+                        print("Debe ingresar una cantidad válida mayor a 0.")
+                    else:
+                        # Actualizar la cantidad en el carrito
+                        carrito[numero_producto][1] = nueva_cantidad
+                        print(f"La cantidad de {producto} ha sido actualizada a {nueva_cantidad}.")
+                        
+                else:
+                    print("Número de producto no válido.")
+            
+            elif opcion == "2":
+                # Eliminar un producto del carrito
+                numero_producto = int(input("Ingrese el número del producto que desea eliminar: ")) - 1
+                if 0 <= numero_producto < len(carrito):
+                    
+                    producto_eliminado = carrito.pop(numero_producto)
+                    print(f"{producto_eliminado[0]} ha sido eliminado del carrito.")
+                else:
+                    print("Número de producto no válido.")
+            
+            elif opcion == "3":
+                # Vaciar el carrito
+                confirmar = input("¿Está seguro que desea vaciar el carrito? (si/no): ").lower()
+                if confirmar == "si":
+                    carrito.clear()
+                    print("El carrito ha sido vaciado.")
+                    opcion = "4"  # Salir del carrito
+            
+            elif opcion == "4":
+                monto_total, carrito, producto = pago(carrito)
+            
+            elif opcion == '5':
+                # Salir del carrito
+                print("Saliendo del gestor del carrito.")
+                
+            else:
+                print("Opción no válida. Intente de nuevo.")
+
+    return monto_total, carrito, producto
 
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-
-def iniciar_sesion(compras_realizadas, usuario):
+def iniciar_sesion(compras_realizadas):
     crear_iniciar = input("Desea crear cuenta (1) o iniciar sesion (2). -1 para finalizar ? ")
 
     if crear_iniciar == "1":
@@ -210,7 +206,6 @@ def iniciar_sesion(compras_realizadas, usuario):
 
 
 def validar_usuario():
-    caracteres_especiales = ["!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "-", "_", "=", "+", "{", "}", "[", "]", "|", "\\", ":", ";", "'", "\"", "<", ">", ",", ".", "?", "/"]
 
     valido = False 
     while valido == False:
@@ -241,8 +236,6 @@ def validar_usuario():
             valido = False
 
     return usuario
-
-
 
 def validar_contraseña():
     valido = False 
@@ -295,9 +288,7 @@ def validar_contraseña():
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-#_, dinero =comprar_producto(pago=0, producto=producto)
-
-
+#Se ultiliza en el 80%
 
 def validar_tarjeta():
     opcion = ""
@@ -344,7 +335,7 @@ Desea:
             if opcion == 1:
                 numero_tarjeta = input("Ingrese el numero de su tarjeta: ")
             else:
-                print("Paga con transferencia")#pagar_transferencia()
+                print("Paga con transferencia")
                 opcion = "tranferencia"
                 tarjeta = None
 
@@ -360,14 +351,49 @@ def calcular_descuento(monto_total, descuento):
     monto_con_descuento = monto_total - descuento
     return monto_con_descuento
 
-def pago(monto_total):
+def pago(carrito):
+    monto_total = 0
+    for i in carrito:
+        monto_total += i[1] * i[2]
+        
     print(f"El monto total es: ${monto_total}")
     opcion = input("Desea pagar? ").lower()
     if opcion == "si":
         print("Gracias por su compra!!")
+        print(carrito)
+        #[('Manzana', 3, 100)]
+        #[["Manzana", 10, 100], ["Pera", 5, 25], ["Sprite", 4, 1000]]
+        
+        for i in carrito:
+            for j in producto:
+                if i[0] == j[0]:
+                      
+                    if i[1] < j[1]:
+                        j[1] -= i[1]
+                        compras_realizadas.append((i[0], i[1], i[2]))
+                        
+                    elif i[1] == j[1]:
+                        compras_realizadas.append((i[0], i[1], i[2]))
+                        del producto[producto.index(j)]
+        
+        carrito.clear()
     else:
         print("Vuelva pronto!!")
+    
+    '''        while cantidad_compra < 1:
+                    print("Ingrese un valor válido.")
+                    cantidad_compra = int(input("¿Cuánto desea comprar? "))
+                
+                if cantidad_compra < i[1]:
+                    i[1] -= cantidad_compra
+                    compras_realizadas.append((i[0], cantidad_compra, i[2]))
+                
+                elif cantidad_compra == i[1]:
+                    compras_realizadas.append((i[0], i[1], i[2]))
+                    del producto[producto.index(i)]
+        carrito.clear()'''
         
+    return monto_total, carrito, producto
     '''print("Selecciona el metodo de pago:")
     print("1. Tarjeta")
     print("2. Transferencia bancaria")
