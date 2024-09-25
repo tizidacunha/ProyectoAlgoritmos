@@ -2,7 +2,7 @@
 
 #Aca se importaran todas las funciones del comprador y del vendedor
 
-from comprador.func_comprador import comprar_producto, ver_productos, detalles_productos, gestionar_carrito, historial_compras, pago
+from comprador.func_comprador import comprar_producto, ver_productos, detalles_productos, gestionar_carrito, historial_compras, pago, iniciar_sesion
 from vendedor.func_vendedor import Agregar_productos, Eliminar_productos, Editar_productos, Gestion_de_pedidos, estadisticas
 producto = [["Manzana", 10, 100], ["Pera", 5, 25], ["Sprite", 4, 1000]]
 contrasena = "admin"
@@ -40,13 +40,15 @@ def menu_comprador():
     3. Detalles de Productos
     4. Carrito / inciar sesion / Pago
     5. Historial Compra
-    6. Ir a Administrador''')
+    6. Iniciar Session
+    7. Ir a Administrador''')
     print("-----------------------------------------------------------------------------------------------------------------------------")
    
                  
 #ARRANCA EL MENU
 def main():
     global carrito
+    global producto
     global dinero
     accion = 0
 
@@ -67,41 +69,43 @@ def main():
             while ingreso_numero:
                 try:
                     accion = int(input("Que desea hacer ? o ingrese -1 para terminar: "))
-                    while accion != -1 and not (accion >= 1 and accion <= 6):
+                    while accion != -1 and not (accion >= 1 and accion <= 7):
                         print("Ingrese una accion valida")
                         accion = int(input("Que desea hacer ? o ingrese -1 para terminar: "))
                     ingreso_numero = False
                 except ValueError:
-                    print("Ingrese un numero del 1 al 6")
+                    print("Ingrese un numero del 1 al 7")
 
             while rol != "Admin" and accion != -1: 
             
                 if accion == 1:
-                    carrito, dinero = comprar_producto(dinero, producto)
+                    carrito = comprar_producto(producto)
                 elif accion == 2:
                     ver_productos(producto)
                 elif accion == 3:
                     detalles_productos()
                 elif accion == 4:
-                    gestionar_carrito(carrito=carrito,monto_total=dinero)
+                    dinero, carrito, producto = gestionar_carrito(carrito=carrito,monto_total=dinero, producto=producto)
                 elif accion == 5:
                     historial_compras()
                 elif accion == 6:
+                    iniciar_sesion(carrito)
+                elif accion ==7:
                     rol = "Admin"
                 
-                if accion != 6 and accion != -1:
+                if accion != 7 and accion != -1:
                     menu_comprador()
                     
                     ingreso_numero = True
                     while ingreso_numero:
                         try:
                             accion = int(input("Que desea hacer? o ingrese -1 para terminar: "))
-                            while (accion < 1 or accion > 6) and (accion != -1):
+                            while (accion < 1 or accion > 7) and (accion != -1):
                                 print("Ingrese una accion valida")
                                 accion = int(input("Que desea hacer ? o ingrese -1 para terminar: "))
                             ingreso_numero = False
                         except ValueError:
-                            print("Ingres una opcion del 1 al 6")
+                            print("Ingres una opcion del 1 al 7")
                 
                 
         elif rol == "Admin":
