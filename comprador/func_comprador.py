@@ -238,50 +238,17 @@ def validar_usuario():
     return usuario
 
 def validar_contraseña():
-    valido = False 
-    contador_caracteres = 0
-    contador_mayusculas = 0
-    contador_numeros = 0
-    caracteres_especiales = ["!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "-", "_", "=", "+", "{", "}", "[", "]", "|", "\\", ":", ";", "'", "\"", "<", ">", ",", ".", "?", "/"]
-
-
-    while not valido:
-        valido = True 
-
-        contrasena = input("Ingrese su contraseña de usuario: ")
-
-        #Valido que la contraseña tenga menos de 20 caracteres
-        if len(contrasena) > 20:
-            print("La contraseña tiene que tener menos de 20 caracteres.")
+    
+    valido = True
+    contrasena = str(input("Ingrese la contraseña: "))
+    especiales = r"[\\!\"#$%&'()*+,-./:;<=>?@\[\]^_`\{|\}~]"
+    while valido:
+        if re.search(especiales,contrasena) and re.search("[A-Z]",contrasena) and re.search("[0-9]",contrasena) and len(contrasena)>=8:
             valido = False
-
-        #Valido que la contraseña tenga mas de 8 caracteres
-        if len(contrasena) < 8:
-            print("La contraseña tiene que tener al menos 5 caracteres.")
-            valido = False
-
-        #Valido la cantidad de caracteres especiales, mayusculas y numeros 
-        for i in contrasena:
-            if i in caracteres_especiales:
-                contador_caracteres += 1
-            if i.isalpha() and i == i.upper():
-                contador_mayusculas += 1
-            if i.isalnum():
-                contador_numeros += 1
-
-
-        if contador_caracteres < 2:
-            print("La contraseña tiene que contener al menos 2 caracteres especiales.")
-            valido = False
-
-        if contador_mayusculas < 1:
-            print("La contraseña tiene que contener al menos 1 letra mayúscula.")
-            valido = False
-
-        if contador_numeros < 1:
-            print("La contraseña tiene que contener al menos 1 numero.")
-            valido = False
-
+        else:
+            print("La contrasena debe tener al menos: 1 numero, 1 mayuscula, 1 caracter especial y al menos 8 caracteres de largo")
+            contrasena = (input("Ingrese la contraseña: ")) 
+    
     return contrasena
 
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
