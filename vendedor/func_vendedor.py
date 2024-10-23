@@ -1,4 +1,6 @@
 #FUNCIONES DEL VENDEDOR DEL E-COMMERCE
+import random
+
 
 def Agregar_productos(lista):
     """En esta funcion se podra agregar productos"""
@@ -163,11 +165,46 @@ def Editar_productos(lista):
 #---------------------------------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------------------------------
-    
-def Gestion_de_pedidos():
-    """En esta funcion se podra gestionar los pedidos que lleguen del comprador"""
-    pass
 
+def Gestion_de_pedidos(historial_carrito,email): #Falta parametros recibidos
+    """En esta funcion se podra gestionar los pedidos que lleguen del comprador"""
+    
+    try:
+        Archivo_de_Pedidos = open("pedidos.csv","rt")
+        linea = Archivo_de_Pedidos.readline()
+        
+        codigo_compra = random.randint(1000,9999)
+        
+        for linea in Archivo_de_Pedidos:
+            campos = linea.strip().split(";")
+            print(campos)
+            print(campos[0])
+            if campos[0]:   #VERIFICA SI EXISTE ALGO EN LA POSICION O SI ESTA VACIO
+                codigo_anterior = int(campos[0])
+            else:
+                continue
+            
+            while codigo_anterior == codigo_compra:
+                codigo_compra = random.randint(1000,9999)
+                
+    except IOError:
+        print("Error de archivo")
+    finally:
+        Archivo_de_Pedidos.close()
+    
+    try:
+       
+        Archivo_de_Pedidos = open("pedidos.csv","at")
+        Pedido = str(codigo_compra)+";"+str(historial_carrito)+";"+email+";"+"\n"
+        
+        Archivo_de_Pedidos.write(Pedido+"\n")
+
+    except IOError:
+        print("Error de generacion de archivo")
+    finally:
+        Archivo_de_Pedidos.close()
+        
+        
 #---------------------------------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------------------------------
