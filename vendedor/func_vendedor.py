@@ -60,6 +60,8 @@ def Agregar_productos(lista):
 def Eliminar_productos(lista):
     """En esta funcion se podra eliminar productos"""
     
+    lista_auxiliar = []
+    
     nombre = input("Ingrese el nombre del producto que quiera eliminar o -1 para terminar: ")
     while (not (nombre.isalpha())) and nombre != "-1": #para revisar que el nombre del producto ingresado no sea un numero
         print("Ingrese un nombre de producto en letras: ")
@@ -69,7 +71,9 @@ def Eliminar_productos(lista):
         
         encontrado = False
         for i in lista:
+                        
             if nombre == i[0]:
+                lista_auxiliar.append(i)
                 lista.remove(i)
                 print("El producto ha sido eliminado")
                 encontrado = True
@@ -80,8 +84,18 @@ def Eliminar_productos(lista):
         nombre = input("Ingrese el nombre del producto que quiera eliminar o -1 para terminar: ") 
         while (not (nombre.isalpha())) and nombre != "-1": #para revisar que el nombre del producto ingresado no sea un numero
             print("Ingrese un nombre de producto en letras: ")
-            nombre = input("Ingresa el nombre del producto, si desea terminar ingrese -1: ")      
+            nombre = input("Ingresa el nombre del producto, si desea terminar ingrese -1: ")
+    #ENTREGA DEL 80%
+    try:
+        Archivo_papelera = open("papelera.csv","at")
+        for i in lista_auxiliar: #Agrega al archivo uno por uno los elementos eliminados de la lista
+            Archivo_papelera.write(f"{i};\n")
     
+    except IOError:
+        print("Error de generacion de archivo")
+    finally:
+        Archivo_papelera.close()
+        
     return lista
 
 #---------------------------------------------------------------------------------------------------------------------------------------------
@@ -177,8 +191,7 @@ def Gestion_de_pedidos(historial_carrito,email): #Falta parametros recibidos
         
         for linea in Archivo_de_Pedidos:
             campos = linea.strip().split(";")
-            print(campos)
-            print(campos[0])
+            
             if campos[0]:   #VERIFICA SI EXISTE ALGO EN LA POSICION O SI ESTA VACIO
                 codigo_anterior = int(campos[0])
             else:
@@ -203,7 +216,6 @@ def Gestion_de_pedidos(historial_carrito,email): #Falta parametros recibidos
         print("Error de generacion de archivo")
     finally:
         Archivo_de_Pedidos.close()
-        
         
 #---------------------------------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------------------------------
@@ -251,3 +263,58 @@ def estadisticas(mas_vendido,menos_vendido,banco,lista):
 #---------------------------------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------------------------------
+producto = [["Manzana", 10, 100], ["Pera", 5, 25], ["Sprite", 4, 1000]]
+def papelera(lista):
+    
+    try:
+        Papelera = open("papelera.csv","rt")
+        linea = Papelera.readline()
+        campos = []
+        campos.append(linea.strip(";\n"))
+        for linea in Papelera:
+            campos.append(linea.strip(";\n"))
+    
+    except IOError:
+        print("Error de apertura de archivo")
+    finally:
+        Papelera.close()
+        
+    print("Desea recuperar alguno de los elementos? Ingrese el numero de indice si es asi")
+    print("Papelera:")
+    print()
+    for i in campos:
+        print(f"-{campos.index(i)}: {i}" "\n")
+        
+    indice = int(input("Desea recuperar alguno de los elementos? Ingrese el numero de indice si es asi o -1 para salir: "))
+    
+    while indice != -1:
+    
+        for i in campos:
+            if indice == campos.index(i):
+                
+                cadena = i
+                campos.remove(i)
+                
+                cadena = cadena.strip("[]") #ELIMINA CORCHETES Y COMILLAS
+                
+                elementos = cadena.split(",")  
+                
+                producto = [int(x) if x.isdigit() else x.strip("'") for x in elementos] #Verifica si el elemento es un entero, si lo es le aplica int(x), si no lo es, le saca la triple comilla.
+                
+                lista.append(producto)
+                    
+                
+        try: #Reescribe el archivo sin el elemento que se recupera
+            nueva_papelera = open("papelera.csv","wt")
+            for i in campos:
+                nueva_papelera.write(i+";"+"\n")
+                
+        except IOError:
+            print("Error de generacion de archivo")
+        finally:
+            nueva_papelera.close()
+        print(lista)
+    return lista
+
+Eliminar_productos(producto)
+papelera(producto)
