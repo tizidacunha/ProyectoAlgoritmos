@@ -3,7 +3,7 @@
 #Aca se importaran todas las funciones del comprador y del vendedor
 
 from comprador.func_comprador import comprar_producto, ver_productos, detalles_productos, gestionar_carrito, historial_compras, pago, iniciar_sesion
-from vendedor.func_vendedor import Agregar_productos, Eliminar_productos, Editar_productos, Gestion_de_pedidos, estadisticas
+from vendedor.func_vendedor import Agregar_productos, Eliminar_productos, Editar_productos, Gestion_de_pedidos, estadisticas, papelera
 producto = [["Manzana", 10, 100], ["Pera", 5, 25], ["Sprite", 4, 1000]]
 contrasena = "admin"
 dinero = 0
@@ -24,7 +24,8 @@ def menu_vendedor():
     4. Eliminar Producto
     5. Estadisticas
     6. Gestionar pedidos
-    7. Ir a Comprador''')
+    7. Ver papelera
+    8. Ir a Comprador''')
     print("-----------------------------------------------------------------------------------------------------------------------------")
     
 
@@ -126,14 +127,14 @@ def main():
                 while ingreso_numero:
                     try:
                         accion = int(input("Que desea hacer ? o ingrese -1 para terminar: "))
-                        while (accion < 1 or accion > 7) and (accion != -1):
+                        while (accion < 1 or accion > 8) and (accion != -1):
                             print("Ingrese una accion valida")
                             accion = int(input("Que desea hacer ? o ingrese -1 para terminar: "))
                         ingreso_numero = False
                     except ValueError:
                         print("Ingrese una opcion del 1 al 7")
                     
-                while accion >= 1 and accion <= 7 and rol != "Comprador":
+                while accion >= 1 and accion <= 8 and rol != "Comprador":
                     
                 
                     if accion == 1:
@@ -152,19 +153,21 @@ def main():
                     elif accion == 6:
                         Gestion_de_pedidos()
                     elif accion == 7:
+                        producto = papelera(producto)
+                    elif accion == 8:
                         rol = "Comprador"
 
                     else:
                         print("accion no valida")
                 
-                    if accion != 7 and accion != -1:
+                    if accion != 8 and accion != -1:
                         menu_vendedor()
                         
                         ingreso_numero = True
                         while ingreso_numero:
                             try:
                                 accion = int(input("Que desea hacer? o ingrese -1 para terminar: "))
-                                while (accion < 1 or accion > 7) and (accion != -1):
+                                while (accion < 1 or accion > 8) and (accion != -1):
                                     print("Ingrese una accion valida")
                                     accion = int(input("Que desea hacer ? o ingrese -1 para terminar: "))
                                 ingreso_numero = False

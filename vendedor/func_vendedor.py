@@ -264,6 +264,7 @@ def estadisticas(mas_vendido,menos_vendido,banco,lista):
 #---------------------------------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------------------------------
 producto = [["Manzana", 10, 100], ["Pera", 5, 25], ["Sprite", 4, 1000]]
+print(producto)
 def papelera(lista):
     
     try:
@@ -278,31 +279,62 @@ def papelera(lista):
         print("Error de apertura de archivo")
     finally:
         Papelera.close()
-        
-    print("Desea recuperar alguno de los elementos? Ingrese el numero de indice si es asi")
+  
+    print()
     print("Papelera:")
     print()
-    for i in campos:
-        print(f"-{campos.index(i)}: {i}" "\n")
+
+    for indice_archivo, i in enumerate(campos):
+        print(f"-{indice_archivo}: {i}\n")
         
-    indice = int(input("Desea recuperar alguno de los elementos? Ingrese el numero de indice si es asi o -1 para salir: "))
+    bandera=True
+    while bandera:
+        try:
+            indice = int(input("Desea recuperar alguno de los elementos? Ingrese el numero de indice si es asi o -1 para salir: "))
+            while (indice > len(campos)-1) or (indice < -1):
+                print("Error de seleccion de indice")
+                print()
+                indice = int(input("Ingrese un numero entre el rango establecido: "))
+            bandera=False
+        except ValueError:
+            print("Debe seleccionar un numero de indice")
+    print()
     
     while indice != -1:
-    
-        for i in campos:
-            if indice == campos.index(i):
-                
-                cadena = i
-                campos.remove(i)
-                
-                cadena = cadena.strip("[]") #ELIMINA CORCHETES Y COMILLAS
-                
+        producto = []
+        for indice_archivo,i in enumerate(campos): #Uso de enumerate para los indices por si se repite el mismo producto
+            if  indice==indice_archivo:
+ 
+                cadena = i.strip("[]")
+                            
                 elementos = cadena.split(",")  
                 
-                producto = [int(x) if x.isdigit() else x.strip("'") for x in elementos] #Verifica si el elemento es un entero, si lo es le aplica int(x), si no lo es, le saca la triple comilla.
-                
-                lista.append(producto)
+                for x in elementos:
                     
+                    x=x.strip().strip("'")
+                    if x.isdigit():
+                        producto.append(int(x))
+                    else:
+                        producto.append(x)
+                    
+                lista.append(producto)
+                campos.remove(i)
+                campos.sort()
+                
+        for indice_archivo, i in enumerate(campos):
+            print(f"-{indice_archivo}: {i}\n")
+        
+        bandera=True
+        while bandera:
+            try:
+                indice = int(input("Desea recuperar otro de los elementos? Ingrese el numero de indice si es asi o -1 para salir: "))
+                while (indice > len(campos)-1) or (indice < -1):
+                    print("Error de seleccion de indice")
+                    print()
+                    indice = int(input("Ingrese un numero entre el rango establecido: "))
+                bandera=False
+            except ValueError:
+                print("Debe seleccionar un numero de indice")
                 
         try: #Reescribe el archivo sin el elemento que se recupera
             nueva_papelera = open("papelera.csv","wt")
@@ -313,8 +345,8 @@ def papelera(lista):
             print("Error de generacion de archivo")
         finally:
             nueva_papelera.close()
-        print(lista)
     return lista
 
 Eliminar_productos(producto)
 papelera(producto)
+print(producto)
