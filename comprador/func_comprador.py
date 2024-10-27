@@ -1,7 +1,3 @@
-producto = [["Manzana", 10, 100], ["Pera", 5, 25], ["Sprite", 4, 1000]]
-historial_compra = [[["Manzana", 2], ["Pera", 2], "tizidac2004"]]
-usuario_contrasena = [{"usuario": "tizidac2004", "contrasena": "admin"}]
-compras_realizadas = ["Manzana"]
 import re
 
 
@@ -10,7 +6,7 @@ import re
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-def Recomendar_productos(compras_realizadas, usuario):
+def Recomendar_productos(compras_realizadas, usuario, historial_compra):
     """ Se corre la lista de historial de compras y se verifica si la ultima posicion de esta lista es igual al usuario, si 
     es igual se itera las listas en la posicion 1 y se verifica si este nombre no esta en la listas de compras realizadas """
     recomendar_productos = [item[0] for compra in historial_compra if compra[-1] == usuario for item in compra[:-1] if item[0] not in compras_realizadas]
@@ -23,68 +19,196 @@ def Recomendar_productos(compras_realizadas, usuario):
 
 
 def comprar_producto(producto):
-    nombre = input("Ingrese el nombre del producto que quiera comprar o -1 para terminar: ")
-    compras_realizadas = [] 
-    
+    compras_realizadas = []  # Almacena las compras antes de confirmar
+
+    nombre = input("Ingrese el nombre del producto que quiera comprar o -1 para terminar: ").title()
+    print(nombre)
     while nombre != "-1":
         encontrado = False
         for i in producto:
             if i[0] == nombre:
                 encontrado = True
                 
-                cantidad_compra = int(input("¿Cuánto desea comprar? "))
-                while cantidad_compra < 1:
-                    print("Ingrese un valor válido.")
-                    cantidad_compra = int(input("¿Cuánto desea comprar? "))
-                
-                if cantidad_compra < i[1]:
-                    compras_realizadas.append([i[0], cantidad_compra, i[2]])
-                
-                elif cantidad_compra == i[1]:
-                    compras_realizadas.append([i[0], i[1], i[2]])
+                if i[1] > 0:
+                    cantidad_compra = int(input(f"¿Cuánto desea comprar? Tenemos {i[1]} en stock: "))
                     
+                    while cantidad_compra < 1 or cantidad_compra > i[1]:
+                        if cantidad_compra > i[1]:
+                            print(f"No puedes comprar más de lo disponible en stock ({i[1]}).")
+                        else:
+                            print("Ingrese un valor válido.")
+                        cantidad_compra = int(input(f"¿Cuánto desea comprar? Tenemos {i[1]} en stock: "))
+                    
+                    # Verificar si ya existe el producto en compras_realizadas
+                    producto_en_carrito = False
+                    for compra in compras_realizadas:
+                        if compra[0] == i[0]:
+                            nueva_cantidad = compra[1] + cantidad_compra
+                            if nueva_cantidad <= i[1]:
+                                compra[1] = nueva_cantidad  # Actualizar cantidad
+                                print(f"Cantidad actualizada: {compra[1]} unidades de {i[0]} en el carrito.")
+                            else:
+                                print(f"No puedes comprar más de lo disponible ({i[1]} unidades).")
+                            producto_en_carrito = True
+                            break
+                    
+                    if not producto_en_carrito:
+                        # Si no está en el carrito, agregarlo
+                        compras_realizadas.append([i[0], cantidad_compra, i[2]])
+                        print(f"{cantidad_compra} unidades de {i[0]} agregadas al carrito.")
+                        i[1] = i[1] - cantidad_compra
                 else:
-                    print(f"Solo tenemos disponible en stock {i[1]}.")
-                    accion = input("¿Desea comprar lo disponible? Ingrese 'si' o 'no': ")
-                    
-                    if accion.lower() == "si":
-                        compras_realizadas.append([i[0], i[1], i[2]])
-                    else:
-                        print("Gracias, ¡Vuelva pronto!")
-        
+                    print("Producto sin stock.")
+
         if not encontrado:
             print("Producto no encontrado, ingrese otro.")
+        
+        nombre = input("Ingrese el nombre del producto que quiera comprar o -1 para terminar: ").capitalize()
 
-        nombre = input("Ingrese el nombre del producto que quiera comprar o -1 para terminar: ")
-    
-    return compras_realizadas
-
-
-
-
+    print(producto)
+    return compras_realizadas, producto
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 
-def ver_productos(producto):
+def ver_productos(producto_aux):
     print()
     print("Productos: ")
-    if producto == []:
+    if producto_aux == []:
         print("No hay productos en stock")
     else:
-        for i in producto:
-            print("Nombre:", i[0]," , Cantidad: ", i[1]," y Precio: $", i[2])
+        contador = 0
+        for i in producto_aux:
+            if i[1] > 0:
+                print(f"{i[0]}, {i[1]}, ${i[2]}", end=" | ")
+                contador += 1
+                if contador % 5 == 0:  # Cada 5 productos, imprime una nueva línea
+                    print("")
+                    print("")
+        if contador % 5 != 0:  # Si el último bloque no tiene exactamente 5 productos, termina la línea.
+            print("")
 
+
+def buscar_producto_similar(producto):
+    encontrado = False
+
+    nombre_buscar = input("Ingrese el nombre del producto que desea buscar: ")
+    nombre_buscar = nombre_buscar.lower()
+
+    for j in producto:
+        nombre_producto = j[0].lower() 
+        contador = 0  
+
+        for i in range(len(nombre_buscar)):
+            if i < len(nombre_producto) and nombre_buscar[i] == nombre_producto[i]:
+                contador += 1
+
+    if contador > (len(nombre_buscar) // 2):
+        print(f"Posible coincidencia encontrada: {j[0]} con {contador} coincidencias.")
+        encontrado = True, j[0].title()
+
+    return encontrado
+
+
+
+
+
+categorias = {
+    "Comida": [
+        "Manzana", "Pera", "Helado de vainilla"],
+    "Bebida": [
+        "Sprite"
+    ],
+    "Ropa": [
+        "Camiseta Nike", "Pantalon Adidas"
+    ],
+    "Calzado": [
+        "Zapatos Adidas"
+    ],
+    "Tecnología": [
+        "Iphone 12", "Laptop Lenovo"
+    ],
+    "Electrónica": [
+        "Audifonos Sony", "Camara Canon"
+    ],
+    "Muebles": [
+        "Silla de oficina", "Mesa de comedor", "Colchon King Size"
+    ],
+    "Libros": [
+        "Libro Harry Potter"
+    ],
+    "Cosmética": [
+        "Perfume Chanel"
+    ],
+    "Vehículos": [
+        "Moto Yamaha"
+    ],
+    "Deportes": [
+        "Bicicleta Montaña", "Raqueta de tenis"
+    ],
+    "Juguetes": [
+        "Juguete LEGO"
+    ],
+    "Electrodomésticos": [
+        "Cafetera Nespresso"
+    ],
+    "Música": [
+        "Guitarra Fender"
+    ],
+    "Hogar": [
+        "Planta decorativa", "Set de toallas", "Lampara de escritorio"
+    ],
+    "Cocina": [
+        "Juego de ollas"
+    ]
+}
+
+
+
+
+producto = [["Camiseta Nike", 100, 1000], ["Pantalon Adidas", 50, 40]]
+
+def categoria():
+    elegir_categoria = input("Ingrese el nombre de la categoria: ").capitalize()
+    for i in categorias.keys():
+        if i == elegir_categoria:
+            print(categorias[elegir_categoria])
+            for j in categorias[elegir_categoria]:
+                for k in producto:
+                    if j == k[0]:
+                        print(k)
+
+
+
+#categoria()
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 #Se ultiliza en el 80%
 def detalles_productos():
-    #Esta funcion permitira que el comprador vea unos detalles breves del producto que seleccione
-    pass
+    # Esta función permitirá que el comprador vea detalles breves del producto que seleccione.
+    
+    producto_buscado = input("Por favor, introduce el nombre del producto que deseas buscar: ").strip()
+
+    try:
+        # Abrir el archivo que contiene los detalles de los productos
+        with open('comprador/detalles_productos.txt', 'r') as archivo:
+            # Leer cada línea del archivo
+            lineas = archivo.readlines()
+            
+
+            for linea in lineas:
+                if linea.lower().startswith(producto_buscado.lower()):
+                    print(f"Detalle del producto '{producto_buscado}': {linea}")
+                    return linea
+            
+            # Si no se encuentra el producto en el archivo
+            print(f"Lo siento, no se encontró el producto '{producto_buscado}' en la lista.")
+    except Exception:
+        print("El archivo no fue encontrado.")
 
 
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -96,6 +220,7 @@ def gestionar_carrito(carrito, monto_total, producto):
     opcion = 1
     if not carrito:
         opcion = "5"
+        print("")
         print("El carrito está vacío.")
     
     while opcion != "5" :
@@ -121,24 +246,45 @@ def gestionar_carrito(carrito, monto_total, producto):
             opcion = input("\nSeleccione una opción (1-4): ")
             
             if opcion == "1":
-                # Modificar cantidad de un producto
+                # Modificar cantidad de un producto en el carrito
                 numero_producto = int(input("Ingrese el número del producto que desea modificar: ")) - 1
+                
                 if 0 <= numero_producto < len(carrito):   
-                    nueva_cantidad = int(input(f"Ingrese la nueva cantidad para {carrito[numero_producto][0]}: "))
+                    nombre_producto = carrito[numero_producto][0]
+                    nueva_cantidad = int(input(f"Ingrese la nueva cantidad para {nombre_producto}: "))
+
                     if nueva_cantidad <= 0:
                         print("Debe ingresar una cantidad válida mayor a 0.")
                     else:
-                        # Actualizar la cantidad en el carrito
-                        carrito[numero_producto][1] = nueva_cantidad
-                        print(f"La cantidad de {producto} ha sido actualizada a {nueva_cantidad}.")
-                        
+                        # Buscar el stock original en 'producto' (que no ha sido modificado)
+                        for prod in producto:  # Usamos 'producto' en lugar de 'producto_aux' para el stock original
+                            if prod[0] == nombre_producto:
+                                stock_original = prod[1]  # Este es el stock disponible original
+                                cantidad_actual_carrito = carrito[numero_producto][1]  # Cantidad ya en el carrito
+                                
+                                # Verificar si la nueva cantidad supera el stock original disponible
+                                if nueva_cantidad <= stock_original + cantidad_actual_carrito:
+                                    nueva_cantidad_producto = carrito[numero_producto][1] + producto[numero_producto][1] - nueva_cantidad
+                                    # Actualizar la cantidad en el carrito
+                                    carrito[numero_producto][1] = nueva_cantidad
+                                    producto[numero_producto][1] = nueva_cantidad_producto
+                                    print(f"La cantidad de {nombre_producto} ha sido actualizada a {nueva_cantidad}.")
+
+                                    #producto_aux[numero_producto][1] = producto[numero_producto][1] - nueva_cantidad
+
+                                else:
+                                    print(f"No puedes comprar más de lo disponible en stock ({stock_original + cantidad_actual_carrito} unidades).")
+                                break
                 else:
                     print("Número de producto no válido.")
-            
+
             elif opcion == "2":
                 # Eliminar un producto del carrito
                 numero_producto = int(input("Ingrese el número del producto que desea eliminar: ")) - 1
                 if 0 <= numero_producto < len(carrito):
+                    
+                    nueva_cantidad_producto = carrito[numero_producto][1] + producto[numero_producto][1]
+                    producto[numero_producto][1] = nueva_cantidad_producto
                     
                     producto_eliminado = carrito.pop(numero_producto)
                     print(f"{producto_eliminado[0]} ha sido eliminado del carrito.")
@@ -146,13 +292,22 @@ def gestionar_carrito(carrito, monto_total, producto):
                     print("Número de producto no válido.")
             
             elif opcion == "3":
-                # Vaciar el carrito
-                confirmar = input("¿Está seguro que desea vaciar el carrito? (si/no): ").lower()
-                if confirmar == "si":
-                    carrito.clear()
-                    print("El carrito ha sido vaciado.")
-                    opcion = "4"  # Salir del carrito
-            
+                # Vaciar todo el carrito y reponer los productos
+                for i in carrito:
+                    nombre_producto = i[0]
+                    cantidad_carrito = i[1]
+                    
+                    # Buscar el producto en la lista de productos y reponer la cantidad
+                    for producto_item in producto:
+                        if producto_item[0] == nombre_producto:
+                            producto_item[1] += cantidad_carrito
+                            break
+                
+                carrito.clear()
+                opcion = 4
+
+                print("Todos los productos han sido eliminados del carrito y las cantidades han sido repuestas en la lista de productos.")
+
             elif opcion == "4":
                 monto_total, carrito, producto = pago(carrito)
             
@@ -170,7 +325,7 @@ def gestionar_carrito(carrito, monto_total, producto):
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-def iniciar_sesion(compras_realizadas):
+def iniciar_sesion(compras_realizadas, usuario_contrasena, historial_compra):
     crear_iniciar = input("Desea crear cuenta (1) o iniciar sesion (2). -1 para finalizar ? ")
 
     if crear_iniciar == "1":
@@ -205,7 +360,7 @@ def iniciar_sesion(compras_realizadas):
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-def validar_usuario():
+def validar_usuario(usuario_contrasena):
 
     valido = False 
     while valido == False:
@@ -327,40 +482,12 @@ def pago(carrito):
     opcion = input("Desea pagar? ").lower()
     if opcion == "si":
         print("Gracias por su compra!!")
-        print(carrito)
-        #[('Manzana', 3, 100)]
-        #[["Manzana", 10, 100], ["Pera", 5, 25], ["Sprite", 4, 1000]]
-        
-        for i in carrito:
-            for j in producto:
-                if i[0] == j[0]:
-                      
-                    if i[1] < j[1]:
-                        j[1] -= i[1]
-                        compras_realizadas.append((i[0], i[1], i[2]))
-                        
-                    elif i[1] == j[1]:
-                        compras_realizadas.append((i[0], i[1], i[2]))
-                        del producto[producto.index(j)]
-        
         carrito.clear()
     else:
         print("Vuelva pronto!!")
     
-    '''        while cantidad_compra < 1:
-                    print("Ingrese un valor válido.")
-                    cantidad_compra = int(input("¿Cuánto desea comprar? "))
-                
-                if cantidad_compra < i[1]:
-                    i[1] -= cantidad_compra
-                    compras_realizadas.append((i[0], cantidad_compra, i[2]))
-                
-                elif cantidad_compra == i[1]:
-                    compras_realizadas.append((i[0], i[1], i[2]))
-                    del producto[producto.index(i)]
-        carrito.clear()'''
-        
-    return monto_total, carrito, producto
+    return monto_total, carrito
+
     '''print("Selecciona el metodo de pago:")
     print("1. Tarjeta")
     print("2. Transferencia bancaria")
@@ -410,3 +537,25 @@ def historial_compras():
     #Esta funcion permitira que el comprador tenga un registro de sus compras y las pueda volver a repetir
     #Para esta funcion se necesita tener un archivo de datos, algo que agregaremos para la segunda entrega
     pass
+
+
+producto_original = producto.copy()
+
+def ordenar_productos(producto):
+    
+    modo = input("Ingrese el orden en el que quiere ver los productos: ascendente(1), descendente(2), default(3): ")
+
+    if modo == '1':
+        # Ordenar por precio ascendente (índice 2 para el precio)
+        producto.sort(key=lambda x: x[2])
+
+    elif modo == '2':
+        # Ordenar por precio descendente (índice 2 para el precio)
+        producto.sort(key=lambda x: x[2], reverse=True)
+
+    elif modo == '3':
+        # Volver a la lista original
+        producto = producto_original.copy()
+
+    return producto
+
