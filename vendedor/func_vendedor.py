@@ -182,48 +182,51 @@ def Editar_productos(lista):
 
 def Gestion_de_pedidos(historial_carrito,email): #Falta parametros recibidos
     """En esta funcion se podra gestionar los pedidos que lleguen del comprador"""
-    
-    try:
-        Archivo_de_Pedidos = open("pedidos.csv","rt")
-        linea = Archivo_de_Pedidos.readline()
-        
-        codigo_compra = random.randint(1000,9999)
-        
-        for linea in Archivo_de_Pedidos:
-            campos = linea.strip().split(";")
+    primera_vez = True
+    if primera_vez == False:
+        try:
+            Archivo_de_Pedidos = open("pedidos.csv","rt")
+            linea = Archivo_de_Pedidos.readline()
             
-            if campos[0]:   #VERIFICA SI EXISTE ALGO EN LA POSICION O SI ESTA VACIO
-                codigo_anterior = int(campos[0])
-            else:
-                continue
+            codigo_compra = random.randint(1000,9999)
             
-            while codigo_anterior == codigo_compra:
-                codigo_compra = random.randint(1000,9999)
+            for linea in Archivo_de_Pedidos:
+                campos = linea.strip().split(";")
                 
-    except IOError:
-        print("Error de archivo")
-    finally:
-        Archivo_de_Pedidos.close()
-    
+                if campos[0]:   #VERIFICA SI EXISTE ALGO EN LA POSICION O SI ESTA VACIO
+                    codigo_anterior = int(campos[0])
+                else:
+                    continue
+                
+                while codigo_anterior == codigo_compra:
+                    codigo_compra = random.randint(1000,9999)
+                    
+        except IOError:
+            print("Error de archivo")
+        finally:
+            Archivo_de_Pedidos.close()
+        
     try:
-       
+        if primera_vez == True:
+            codigo_compra = random.randint(1000,9999)
+    
         Archivo_de_Pedidos = open("pedidos.csv","at")
-        Pedido = str(codigo_compra)+";"+str(historial_carrito)+";"+email+";"+"\n"
+        Pedido = str(codigo_compra)+";"+str(historial_carrito)+";"+email+";"
         
         Archivo_de_Pedidos.write(Pedido+"\n")
-
+        primera_vez = False
     except IOError:
         print("Error de generacion de archivo")
     finally:
         Archivo_de_Pedidos.close()
-        
+
 #---------------------------------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------------------------------
 
 
 
-def estadisticas(mas_vendido,menos_vendido,banco,lista):
+def estadisticas(banco,lista):
     """En esta funcion se podran ver las estadisticas de gastos/ganancias, y tambien lo recaudado en el banco"""
     
     estadisticas = {
@@ -284,8 +287,12 @@ def papelera(lista):
     print()
 
     for indice_archivo, i in enumerate(campos):
-        print(f"-{indice_archivo}: {i}\n")
-        
+        if i == "": #Si se abre la papelera antes de que se haya eliminado algo y esta vacia, esto evita que tome las comillas vacias como un elemento
+            campos.remove(i)
+            print("La papelera esta vacia")
+            print()
+        else:
+            print(f"-{indice_archivo}: {i}\n")
     bandera=True
     while bandera:
         try:

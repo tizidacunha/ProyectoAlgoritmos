@@ -190,9 +190,9 @@ def main(carrito, producto, dinero):
                     elif accion == 5:
                         estadisticas(mas_vendido="Manzana", menos_vendido="Pera", lista=producto, banco=dinero)
                     elif accion == 6:
-                        Gestion_de_pedidos()
+                        Gestion_de_pedidos(["Sprite", 4, 1000],"faresmateo")
                     elif accion == 7:
-                        producto = papelera(producto)
+                        papelera(producto)
                     elif accion == 8:
                         rol = "Comprador"
 
