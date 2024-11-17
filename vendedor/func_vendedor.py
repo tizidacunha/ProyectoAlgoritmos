@@ -233,6 +233,50 @@ def Gestion_de_pedidos(historial_carrito,usuario):
 def estadisticas(banco,lista):
     """En esta funcion se podran ver las estadisticas de gastos/ganancias, y tambien lo recaudado en el banco"""
     
+    try:
+        with open("pedidos.json","r") as archivo: #lo abro en modo lectura para ver si existe el codigo compra
+            compras = json.load(archivo)
+            
+            productos = []
+            
+            for i in compras:
+                existia = False
+                nombre = i.get("producto") 
+                cantidad = i.get("cantidad")
+                    
+                for j in productos:
+                    if nombre == j[0]: #verifico si ya existe en la lista de productos, sumo la cantidad
+                        j[1] += cantidad
+                        existia = True
+                    
+                if existia == False: #si existia sigue en false significa que no esta, por ende agrego la lista con el nombre y cant.
+                    productos.append([nombre,cantidad])
+                        
+                
+
+            cantidad_vendidos = list(map(lambda i : i[1], productos)) #agarro solo las cantidades
+            mas_cantidad = max(cantidad_vendidos)
+            menos_cantidad = min(cantidad_vendidos)
+            
+            mas_vendido = []
+            menos_vendido = []
+            
+            for item in productos:
+                if item[1] == mas_cantidad:
+                    mas_vendido.append(item[0])
+                    
+                if item[1] == menos_cantidad:
+                    menos_vendido.append(item[0])
+            
+            mas_vendido = ", ".join(mas_vendido) #por si hay mas de uno uso join para que quede bien en el print
+            menos_vendido = ", ".join(menos_vendido)
+            
+            
+                              
+    except (FileNotFoundError, json.JSONDecodeError):
+        print("Error archivo vacio")
+    
+    
     estadisticas = {
 
         "dinero" : banco,
@@ -266,6 +310,7 @@ def estadisticas(banco,lista):
         print(clave,";",valor)
     
     return estadisticas
+
 
 #---------------------------------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------------------------------
