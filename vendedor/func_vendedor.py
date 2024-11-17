@@ -401,4 +401,3 @@ def papelera(lista):
         finally:
             nueva_papelera.close()
     return lista
-
