@@ -1,6 +1,6 @@
 #FUNCIONES DEL VENDEDOR DEL E-COMMERCE
 import random
-
+import json
 
 def Agregar_productos(lista):
     """En esta funcion se podra agregar productos"""
@@ -180,54 +180,102 @@ def Editar_productos(lista):
 #---------------------------------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------------------------------
 
-def Gestion_de_pedidos(historial_carrito,email): #Falta parametros recibidos
-    """En esta funcion se podra gestionar los pedidos que lleguen del comprador"""
-    primera_vez = True
-    if primera_vez == False:
-        try:
-            Archivo_de_Pedidos = open("pedidos.csv","rt")
-            linea = Archivo_de_Pedidos.readline()
-            
+def Gestion_de_pedidos(historial_carrito,usuario):
+    
+    try:
+        with open("pedidos.json","r") as archivo: #lo abro en modo lectura para ver si existe el codigo compra
+            compras = json.load(archivo)
             codigo_compra = random.randint(1000,9999)
             
-            for linea in Archivo_de_Pedidos:
-                campos = linea.strip().split(";")
-                
-                if campos[0]:   #VERIFICA SI EXISTE ALGO EN LA POSICION O SI ESTA VACIO
-                    codigo_anterior = int(campos[0])
-                else:
-                    continue
-                
-                while codigo_anterior == codigo_compra:
-                    codigo_compra = random.randint(1000,9999)
+            for i in compras:
+                for clave,valor in i.items(): #i = diccionarios dentro de la lista grande del json
                     
-        except IOError:
-            print("Error de archivo")
-        finally:
-            Archivo_de_Pedidos.close()
+                    if (clave == "codigo de compra") and (valor == codigo_compra):
+                        
+                        while valor == codigo_compra: #hasta que el valor de esa key cambie
+                            codigo_compra = random.randint(1000,9999)
+                            
+                        
+            
+    except (FileNotFoundError, json.JSONDecodeError):
+        codigo_compra = random.randint(1000,9999)
+    
+    venta = {
+        
+        "codigo de compra" : codigo_compra,
+        "producto" : historial_carrito[0],
+        "cantidad" : historial_carrito[1],
+        "precio" : historial_carrito[2],
+        "usuario" : usuario,
+    }
         
     try:
-        if primera_vez == True:
-            codigo_compra = random.randint(1000,9999)
-    
-        Archivo_de_Pedidos = open("pedidos.csv","at")
-        Pedido = str(codigo_compra)+";"+str(historial_carrito)+";"+email+";"
         
-        Archivo_de_Pedidos.write(Pedido+"\n")
-        primera_vez = False
+        try:
+            with open("pedidos.json","r") as archivo: #primero lo abro en modo lectura
+                pedidos = json.load(archivo)
+        
+        except (FileNotFoundError, json.JSONDecodeError):
+            pedidos = []
+        
+        pedidos.append(venta)
+        
+        with open("pedidos.json","w") as archivo:
+            json.dump(pedidos,archivo, indent=4)
+            
     except IOError:
         print("Error de generacion de archivo")
-    finally:
-        Archivo_de_Pedidos.close()
 
 #---------------------------------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------------------------------
-
-
 
 def estadisticas(banco,lista):
     """En esta funcion se podran ver las estadisticas de gastos/ganancias, y tambien lo recaudado en el banco"""
+    
+    try:
+        with open("pedidos.json","r") as archivo: #lo abro en modo lectura para ver si existe el codigo compra
+            compras = json.load(archivo)
+            
+            productos = []
+            
+            for i in compras:
+                existia = False
+                nombre = i.get("producto") 
+                cantidad = i.get("cantidad")
+                    
+                for j in productos:
+                    if nombre == j[0]: #verifico si ya existe en la lista de productos, sumo la cantidad
+                        j[1] += cantidad
+                        existia = True
+                    
+                if existia == False: #si existia sigue en false significa que no esta, por ende agrego la lista con el nombre y cant.
+                    productos.append([nombre,cantidad])
+                        
+                
+
+            cantidad_vendidos = list(map(lambda i : i[1], productos)) #agarro solo las cantidades
+            mas_cantidad = max(cantidad_vendidos)
+            menos_cantidad = min(cantidad_vendidos)
+            
+            mas_vendido = []
+            menos_vendido = []
+            
+            for item in productos:
+                if item[1] == mas_cantidad:
+                    mas_vendido.append(item[0])
+                    
+                if item[1] == menos_cantidad:
+                    menos_vendido.append(item[0])
+            
+            mas_vendido = ", ".join(mas_vendido) #por si hay mas de uno uso join para que quede bien en el print
+            menos_vendido = ", ".join(menos_vendido)
+            
+            
+                              
+    except (FileNotFoundError, json.JSONDecodeError):
+        print("Error archivo vacio")
+    
     
     estadisticas = {
 
@@ -262,6 +310,7 @@ def estadisticas(banco,lista):
         print(clave,";",valor)
     
     return estadisticas
+
 
 #---------------------------------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------------------------------
@@ -352,4 +401,3 @@ def papelera(lista):
         finally:
             nueva_papelera.close()
     return lista
-

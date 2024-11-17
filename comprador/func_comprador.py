@@ -16,9 +16,27 @@ def Recomendar_productos(compras_realizadas, usuario, historial_compra):
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+def actualizar_carrito(compras_realizadas, carrito):
+    for i in compras_realizadas:
+        producto_nombre = i[0]  # Nombre del producto
+        producto_cantidad = i[1]  # Cantidad comprada del producto
 
+        # Verificar si el producto ya está en el carrito
+        producto_en_carrito = False
+        for j in carrito:
+            if j[0] == producto_nombre:  # Si el producto ya está en el carrito
+                # Si el producto ya está en el carrito, solo agregamos la cantidad
+                j[1] += producto_cantidad
+                producto_en_carrito = True
+                break
+        
+        # Si el producto no está en el carrito, lo agregamos como nuevo
+        if not producto_en_carrito:
+            carrito.append(i)
 
-def comprar_producto(producto):
+    return carrito
+
+def comprar_producto(producto, carrito):
     compras_realizadas = []  # Almacena las compras antes de confirmar
 
     nombre = input("Ingrese el nombre del producto que quiera comprar o -1 para terminar: ").title()
@@ -65,7 +83,7 @@ def comprar_producto(producto):
         
         nombre = input("Ingrese el nombre del producto que quiera comprar o -1 para terminar: ").capitalize()
 
-    print(producto)
+    compras_realizadas = actualizar_carrito(carrito=carrito, compras_realizadas=compras_realizadas)
     return compras_realizadas, producto
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -91,8 +109,7 @@ def ver_productos(producto_aux):
             print("")
 
 
-def buscar_producto_similar(producto):
-    encontrado = False
+def buscar_producto_similar(producto, carrito):
 
     nombre_buscar = input("Ingrese el nombre del producto que desea buscar: ")
     nombre_buscar = nombre_buscar.lower()
@@ -105,11 +122,18 @@ def buscar_producto_similar(producto):
             if i < len(nombre_producto) and nombre_buscar[i] == nombre_producto[i]:
                 contador += 1
 
-    if contador > (len(nombre_buscar) // 2):
-        print(f"Posible coincidencia encontrada: {j[0]} con {contador} coincidencias.")
-        encontrado = True, j[0].title()
+        if contador > (len(nombre_buscar) // 2):
+            print(f"Posible coincidencia encontrada: {j[0]} con {contador} coincidencias.")
 
-    return encontrado
+            comprar = input(f"Desea comprar el siguiente producto: {j[0]}, ingrese si o no: ").lower()
+
+            if comprar == "si":
+                print(f'Ingrese el nombre ""{j[0]}" correctamente a continuacion..')
+                carrito, producto = comprar_producto(producto, carrito)
+            else:
+                print("Muchas Gracias")
+
+    return carrito
 
 
 
@@ -166,10 +190,6 @@ categorias = {
 }
 
 
-
-
-producto = [["Camiseta Nike", 100, 1000], ["Pantalon Adidas", 50, 40]]
-
 def categoria():
     elegir_categoria = input("Ingrese el nombre de la categoria: ").capitalize()
     for i in categorias.keys():
@@ -181,8 +201,6 @@ def categoria():
                         print(k)
 
 
-
-#categoria()
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -325,153 +343,85 @@ def gestionar_carrito(carrito, monto_total, producto):
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-def iniciar_sesion(compras_realizadas, usuario_contrasena, historial_compra):
-    crear_iniciar = input("Desea crear cuenta (1) o iniciar sesion (2). -1 para finalizar ? ")
+import json
+
+def cargar_datos(archivo):
+    try:
+        with open(archivo, 'r') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return {"usuarios": []}
+
+
+def guardar_datos(archivo, datos):
+    with open(archivo, 'w') as f:
+        json.dump(datos, f, indent=4)
+
+
+import re
+
+def validar_usuario():
+    patron_usuario = r'^[a-zA-Z][a-zA-Z0-9._]{2,15}$'
+    while True:
+        usuario = input("Ingrese su nombre de usuario: ")
+        if re.match(patron_usuario, usuario):
+            return usuario
+        print("El nombre de usuario debe cumplir lo siguiente:")
+        print("- Comenzar con una letra.")
+        print("- Tener entre 3 y 16 caracteres.")
+        print("- Solo puede incluir letras, números, guiones bajos (_) y puntos (.)")
+
+def validar_contraseña():
+    patron_contrasena = r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{8,}$'
+    while True:
+        contrasena = input("Ingrese su contraseña: ")
+        if re.match(patron_contrasena, contrasena):
+            return contrasena
+        print("La contraseña debe cumplir lo siguiente:")
+        print("- Tener al menos 8 caracteres.")
+        print("- Incluir al menos una letra minúscula.")
+        print("- Incluir al menos una letra mayúscula.")
+        print("- Incluir al menos un número.")
+        print("- Incluir al menos un carácter especial (por ejemplo: !@#$%^&*).")
+
+
+
+
+def iniciar_sesion(archivo_json):
+    datos = cargar_datos(archivo_json)
+
+    crear_iniciar = input("¿Desea crear cuenta (1) o iniciar sesión (2)? -1 para finalizar: ")
 
     if crear_iniciar == "1":
         usuario = validar_usuario()
         contrasena = validar_contraseña()
         
-        usuario_contrasena.append({"usuario": usuario, "contrasena": contrasena})
-        historial_compra.append([*compras_realizadas, usuario]) 
-        print(f"Su cuenta ha sido creada con el usuario: {usuario}")
+        if any(u['usuario'] == usuario for u in datos["usuarios"]):
+            print("El usuario ya existe. Intente con otro nombre.")
+        else:
+            datos["usuarios"].append({"usuario": usuario, "contrasena": contrasena})
+            guardar_datos(archivo_json, datos)
+            print(f"Su cuenta ha sido creada con el usuario: {usuario}")
 
     elif crear_iniciar == "2":
         usuario = input("Ingrese su nombre de usuario: ")
-        contrasena = input("Ingrese su contrasena: ")
-        
-        for credenciales in usuario_contrasena:
-            if credenciales["usuario"] == usuario and credenciales["contrasena"] == contrasena:
-                print("¡Bienvenido!")
-                historial_compra.append([*compras_realizadas, usuario])
-                
+        contrasena = input("Ingrese su contraseña: ")
 
-
-                productos_recomendados = Recomendar_productos(usuario=usuario, compras_realizadas=compras_realizadas)
-                print("Productos que podrías considerar comprar nuevamente:")
-                for producto in productos_recomendados:
-                    if producto not in [compra[0] for compra in compras_realizadas]:
-                        print(f"- {producto}")
-
-
-
-#----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-def validar_usuario(usuario_contrasena):
-
-    valido = False 
-    while valido == False:
-        valido = True 
-
-        #Se ingresa el nombre de usuario
-        usuario = input("Ingrese su nombre de usuario: ")
-
-        #Se valida que el usuario ya no se encuentre creado
-        for i in usuario_contrasena:
-            if i["usuario"] == usuario :
-                print("Este usuario ya se encuentra")
-                valido = False
-
-        #Se valida que la cantidad maxima de caracteres sea 20
-        if len(usuario) > 20:
-            print("tiene que tener menos caracteres ")
-            valido = False
-
-        #Se valida que la cantidad minima de caracteres sea 8
-        if len(usuario) < 8:
-            print("tiene que tener mas caracteres ")
-            valido = False
-
-        #Se valida que el usuario solo contenga letras o numeros
-        if not re.match("^[a-zA-Z0-9]+$",usuario):
-            print("El nombre del usuario solo puede contener letras y numeros, sin caracteres especiales.")
-            valido = False
-
-    return usuario
-
-def validar_contraseña():
-    
-    valido = True
-    contrasena = str(input("Ingrese la contraseña: "))
-    especiales = r"[\\!\"#$%&'()*+,-./:;<=>?@\[\]^_`\{|\}~]"
-    while valido:
-        if re.search(especiales,contrasena) and re.search("[A-Z]",contrasena) and re.search("[0-9]",contrasena) and len(contrasena)>=8:
-            valido = False
+        if any(u["usuario"] == usuario and u["contrasena"] == contrasena for u in datos["usuarios"]):
+            print("¡Bienvenido!")
         else:
-            print("La contrasena debe tener al menos: 1 numero, 1 mayuscula, 1 caracter especial y al menos 8 caracteres de largo")
-            contrasena = (input("Ingrese la contraseña: ")) 
-    
-    return contrasena
+            print("Usuario o contraseña incorrectos.")
+
+    elif crear_iniciar == "-1":
+        print("Programa finalizado.")
+    else:
+        print("Opción no válida. Intente nuevamente.")
+
+
 
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-#Se ultiliza en el 80%
-
-def validar_tarjeta():
-    opcion = ""
-    numero_tarjeta = input("Ingrese el numero de su tarjeta: ")
-
-    while opcion != "transferencia" and opcion != "tarjeta":
-
-        if numero_tarjeta[0] == "4" and (len(numero_tarjeta) == 13 or len(numero_tarjeta) == 16):
-            tarjeta = "Visa"
-            validar = True
-        elif numero_tarjeta[0:2] in ['51', '52', '53', '54', '55'] and len(numero_tarjeta) == 16:
-            tarjeta = "MasterCard"
-            validar = True
-        else:
-            validar = False
-
-        fecha_vencimiento = input("Ingrese la fecha de vencimiento MM/AAAA: ")
-        fecha_hoy = "09/2024"
-
-        if int(fecha_hoy[3:7]) > int(fecha_vencimiento[3:7]): 
-            print("tarjeta vencida")
-            validar = False
-        elif int(fecha_hoy[3:7]) == int(fecha_vencimiento[3:7]) and int(fecha_hoy[0:2]) > int(fecha_vencimiento[0:2]):
-            print("tarjeta vencida por mes")
-            validar = False
-
-        cvv = int(input("Ingrese el codigo de seguridad: "))
-        if cvv < 0 or cvv > 999:
-            print("codigo de seguridad incorrecto")
-            validar = False
-        
-        if validar == True:
-            opcion = "tarjeta"
-        elif validar == False:
-            opcion = int(input('''
-Los datos de la tarjeta que ingreso son incorrectos:
-Desea:
-(1) Ingresar otros datos de tarjeta
-(2)Pagar con transferencia: '''))
-
-            while opcion !=1 or opcion !=2:
-                opcion = int(input("Ingresa una opcion correcta"))
-                                   
-            if opcion == 1:
-                numero_tarjeta = input("Ingrese el numero de su tarjeta: ")
-            else:
-                print("Paga con transferencia")
-                opcion = "tranferencia"
-                tarjeta = None
-
-    return opcion, tarjeta
-
-#----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-def calcular_descuento(monto_total, descuento):
-    descuento = monto_total * descuento #0.10
-    monto_con_descuento = monto_total - descuento
-    return monto_con_descuento
 
 def pago(carrito):
     monto_total = 0
@@ -481,6 +431,9 @@ def pago(carrito):
     print(f"El monto total es: ${monto_total}")
     opcion = input("Desea pagar? ").lower()
     if opcion == "si":
+        print("Para pagar necesita iniciar sesion o registrarse")
+        iniciar_sesion(archivo_json='comprador/usuarios.json')
+
         print("Gracias por su compra!!")
         carrito.clear()
     else:
@@ -488,43 +441,6 @@ def pago(carrito):
     
     return monto_total, carrito
 
-    '''print("Selecciona el metodo de pago:")
-    print("1. Tarjeta")
-    print("2. Transferencia bancaria")
-
-    opcion = input("Ingresa el numero de la opcion elegida: ")
-
-    if opcion == "1":
-        print("Elegiste pagar con tarjeta.")
-        print("Te contamos que pagando con tarjeta Visa tienes un 5% de decuento y pagando con MasterCard tienes un 10%")
-        tipo_pago, tipo_tarjeta = validar_tarjeta()
-        if tipo_pago == "tarjeta":
-            if tipo_tarjeta == "Visa":
-
-                print(f"Se cobró ${calcular_descuento(monto_total, descuento= 0.05)} en tu tarjeta Visa.")
-            elif tipo_tarjeta == "MasterCard":
-                print(f"Se cobró ${calcular_descuento(monto_total, descuento= 0.10)} en tu tarjeta MasterCard.")
-        else:
-            opcion = "2"
-
-
-    if opcion == "2":
-        print("Elegiste pagar con transferencia bancaria.")
-        cuenta = input("Ingresa tu número de cuenta: ")
-        while len(cuenta) != 22:
-            print("Ingresa un numero de cuenta correcto")
-            cuenta = input("Ingresa tu número de cuenta: ")
-
-        print(f"Recibiste un descuento del 20%. El monto final es: ${calcular_descuento(monto_total, descuento= 0.20)}")
-
-    else:
-        print("Opcion invalida. Intentalo de nuevo.")
-        pago(monto_total)
-'''
-
-
-
-    
 
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -537,25 +453,3 @@ def historial_compras():
     #Esta funcion permitira que el comprador tenga un registro de sus compras y las pueda volver a repetir
     #Para esta funcion se necesita tener un archivo de datos, algo que agregaremos para la segunda entrega
     pass
-
-
-producto_original = producto.copy()
-
-def ordenar_productos(producto):
-    
-    modo = input("Ingrese el orden en el que quiere ver los productos: ascendente(1), descendente(2), default(3): ")
-
-    if modo == '1':
-        # Ordenar por precio ascendente (índice 2 para el precio)
-        producto.sort(key=lambda x: x[2])
-
-    elif modo == '2':
-        # Ordenar por precio descendente (índice 2 para el precio)
-        producto.sort(key=lambda x: x[2], reverse=True)
-
-    elif modo == '3':
-        # Volver a la lista original
-        producto = producto_original.copy()
-
-    return producto
-

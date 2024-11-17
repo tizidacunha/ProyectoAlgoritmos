@@ -1,0 +1,12 @@
+{
+    "usuarios": [
+        {
+            "usuario": "usuario_prueba",
+            "contrasena": "prueba123"
+        },
+        {
+            "usuario": "usuario_prueba2",
+            "contrasena": "pepe23545W$$"
+        }
+    ]
+}

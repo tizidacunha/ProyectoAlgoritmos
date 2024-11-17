@@ -40,47 +40,60 @@ carrito = []
 
                       
 def menu_vendedor():
+    os.system('cls')
     print()
-    print("-----------------------------------------------------------------------------------------------------------------------------")
-    print("Bienvenido al E-Commerc!!! ")
+    print("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------")
+    print("                                                       Bienvenido al E-Commerce!!! ")
     print("")
     print('''Estas son las opciones disponibles: 
-          
-    1. Agregar un producto:
-    2. Ver Stock       
-    3. Editar Producto
-    4. Eliminar Producto
-    5. Estadisticas
-    6. Gestionar pedidos
-    7. Ver papelera
-    8. Ir a Comprador''')
-    print("-----------------------------------------------------------------------------------------------------------------------------")
-    
+    1. Agregar un Producto || 2. Ver Stock || 3. Editar Producto || 4. Eliminar Producto || 5. Estadísticas || 6. Gestionar Pedidos || 7. Ver Papelera || 8. Ir a Comprador''')
+    print("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------")
+
 
 
 def menu_comprador():
+    os.system('cls')
     print()
     print("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------")
-                                                                                                                                                                                                                
-    print("                                                     Bienvenido al kiosco Las Tias!!! ")
+                                                                                                                                                                                                            
+    print("                                                     Bienvenido al E-Commerce!!! ")
     print("")
     print('''Estas son las opciones disponibles: 
     1. Comprar Productos || 2. Buscar Producto || 3. Detalles de Productos || 4. Carrito || 5. Historial || Historial Compra || 6. Iniciar Session || 7. Ir a Administrador''')
     print("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------")
 
-                 
+
+def obtener_opcion_valida(min_valor, max_valor):
+    """Obtiene y valida una opción numérica del usuario."""
+    while True:
+        try:
+            accion = int(input(f"Ingrese una opción ({min_valor} a {max_valor}, -1 para salir): "))
+            if accion == -1 or (min_valor <= accion <= max_valor):
+                return accion
+            print(f"Por favor ingrese un número entre {min_valor} y {max_valor}")
+        except ValueError:
+            print("Por favor ingrese un número válido")
+
+def obtener_rol_valido():
+    """Obtiene y valida el rol del usuario."""
+    while True:
+        rol = input("Ingrese quien sos: comprador o admin: ").capitalize()
+        if rol in ["Comprador", "Admin"]:
+            return rol
+        print("Rol Inválido!")
+
+
+
+
 #ARRANCA EL MENU
 def main(carrito, producto, dinero):
     os.system('cls')
     accion = 0
 
-
     rol = input("Ingrese quien sos: comprador o admin: ")
     rol = rol.capitalize()
     
-    while rol != "Comprador" and rol != "Admin" or not (rol.isalpha):
-        print("Rol Invalido! ")
-        rol = input("Ingrese un rol valido: Comprador o Admin: ")
+    rol = obtener_rol_valido()
     
     while accion != -1:
 
@@ -89,35 +102,14 @@ def main(carrito, producto, dinero):
             print("")
             ver_productos(producto)
 
-            ingreso_numero = True
-            while ingreso_numero:
-                try:
-                    print("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------")
-                    input("")
-                    accion = int(input("Que desea hacer ? o ingrese -1 para terminar: "))
-                    while accion != -1 and not (accion >= 1 and accion <= 7):
-                        print("Ingrese una accion valida")
-                        accion = int(input("Que desea hacer ? o ingrese -1 para terminar: "))
-                    ingreso_numero = False
-                except ValueError:
-                    print("Ingrese un numero del 1 al 7")
+            accion = obtener_opcion_valida(1, 7)
 
             while rol != "Admin" and accion != -1: 
             
                 if accion == 1:
-                    carrito, producto = comprar_producto(producto)
+                    carrito, producto = comprar_producto(producto=producto, carrito=carrito)
                 elif accion == 2:
-                    encontrado = buscar_producto_similar(producto)
-                    encontradO, nombre = encontrado
-
-                    if encontradO == True:
-                        comprar = input(f"Desea comprar el siguiente producto: {nombre}, ingrese si o no: ").lower()
-
-                        if comprar == "si":
-                            carrito, producto = comprar_producto(producto)
-                        else:
-                            print("Muchas Gracias")
-
+                    carrito = buscar_producto_similar(producto, carrito)
                 elif accion == 3:
                     detalles_productos()
                 elif accion == 4:
@@ -125,29 +117,18 @@ def main(carrito, producto, dinero):
                 elif accion == 5:
                     historial_compras()
                 elif accion == 6:
-                    iniciar_sesion(carrito)
+                    iniciar_sesion(archivo_json='comprador/usuarios.json')
                 elif accion ==7:
                     rol = "Admin"
                 
                 if accion != 7 and accion != -1:
-                    input("")
+                    
                     menu_comprador()
                     print("")
                     ver_productos(producto)
-                    
-                    ingreso_numero = True
-                    while ingreso_numero:
-                        try:
-                            accion = int(input("Que desea hacer? o ingrese -1 para terminar: "))
-                            while (accion < 1 or accion > 7) and (accion != -1):
-                                print("Ingrese una accion valida")
-                                accion = int(input("Que desea hacer ? o ingrese -1 para terminar: "))
-                            ingreso_numero = False
-                        except ValueError:
-                            print("Ingres una opcion del 1 al 7")
+                    accion = obtener_opcion_valida(1,7)
                 
-                
-
+            
         elif rol == "Admin":
 
             contador = 0
@@ -161,17 +142,7 @@ def main(carrito, producto, dinero):
             if clave == contrasena:  
 
                 menu_vendedor()
-
-                ingreso_numero = True
-                while ingreso_numero:
-                    try:
-                        accion = int(input("Que desea hacer ? o ingrese -1 para terminar: "))
-                        while (accion < 1 or accion > 8) and (accion != -1):
-                            print("Ingrese una accion valida")
-                            accion = int(input("Que desea hacer ? o ingrese -1 para terminar: "))
-                        ingreso_numero = False
-                    except ValueError:
-                        print("Ingrese una opcion del 1 al 7")
+                accion = obtener_opcion_valida(1,8)
                     
                 while accion >= 1 and accion <= 8 and rol != "Comprador":
                     
@@ -201,17 +172,7 @@ def main(carrito, producto, dinero):
                 
                     if accion != 8 and accion != -1:
                         menu_vendedor()
-                        
-                        ingreso_numero = True
-                        while ingreso_numero:
-                            try:
-                                accion = int(input("Que desea hacer? o ingrese -1 para terminar: "))
-                                while (accion < 1 or accion > 8) and (accion != -1):
-                                    print("Ingrese una accion valida")
-                                    accion = int(input("Que desea hacer ? o ingrese -1 para terminar: "))
-                                ingreso_numero = False
-                            except ValueError:
-                                print("Ingrese una opcion valida")
+                        accion = obtener_opcion_valida(1,8)
                                 
             else:
                 print("Ladron!! ")
