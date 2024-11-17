@@ -3,6 +3,10 @@ import random
 import json
 
 def Agregar_productos(lista):
+    
+    #Parametro de entrada: lista (matriz de productos).
+    #Parametro de salida: lista (matriz de productos).
+    
     """En esta funcion se podra agregar productos"""
     
     nombre = input("Ingresa el nombre del producto, si desea terminar ingrese -1: ")
@@ -60,6 +64,9 @@ def Agregar_productos(lista):
 def Eliminar_productos(lista):
     """En esta funcion se podra eliminar productos"""
     
+    #Parametro de entrada: lista (matriz de productos).
+    #Parametro de salida: lista (matriz de productos).
+    
     lista_auxiliar = []
     
     nombre = input("Ingrese el nombre del producto que quiera eliminar o -1 para terminar: ")
@@ -104,6 +111,9 @@ def Eliminar_productos(lista):
 
 def Editar_productos(lista):
     """En esta funcion se podra editar productos"""
+    
+    #Parametro de entrada: lista (matriz de productos).
+    #Parametro de salida: lista (matriz de productos).
     
     nombre = input("Ingrese el nombre del producto que quiera editar o -1 para terminar: ")
     while (not (nombre.isalpha())) and nombre != "-1": #para revisar que el nombre del producto ingresado no sea un numero
@@ -182,6 +192,10 @@ def Editar_productos(lista):
 
 def Gestion_de_pedidos(historial_carrito,usuario):
     
+    #Parametro de entrada: historial_carrito(productos comprados) y el usuario q la compro (cadena de texto).
+    #Parametro de salida: Escribe la informacion de la venta hecha en un archivo.json
+    
+    
     try:
         with open("pedidos.json","r") as archivo: #lo abro en modo lectura para ver si existe el codigo compra
             compras = json.load(archivo)
@@ -233,6 +247,9 @@ def Gestion_de_pedidos(historial_carrito,usuario):
 def estadisticas(banco,lista):
     """En esta funcion se podran ver las estadisticas de gastos/ganancias, y tambien lo recaudado en el banco"""
     
+    #Parametros de entrada: banco (dinero cobrado) y lista (matriz de productos).
+    #Parametros de salida: diccionario de estadisticas.
+    
     try:
         with open("pedidos.json","r") as archivo: #lo abro en modo lectura para ver si existe el codigo compra
             compras = json.load(archivo)
@@ -255,6 +272,7 @@ def estadisticas(banco,lista):
                 
 
             cantidad_vendidos = list(map(lambda i : i[1], productos)) #agarro solo las cantidades
+            
             mas_cantidad = max(cantidad_vendidos)
             menos_cantidad = min(cantidad_vendidos)
             
@@ -317,6 +335,9 @@ def estadisticas(banco,lista):
 #---------------------------------------------------------------------------------------------------------------------------------------------
 
 def papelera(lista):
+    
+    #Parametros de entrada: lista (matriz de productos)
+    #Parametros de salida: lista actualizada() 
     
     try:
         Papelera = open("papelera.csv","rt")
