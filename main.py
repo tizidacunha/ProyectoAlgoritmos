@@ -89,6 +89,7 @@ def obtener_rol_valido():
 def main(carrito, producto, dinero):
     os.system('cls')
     accion = 0
+    usuario = ""
 
     rol = input("Ingrese quien sos: comprador o admin: ")
     rol = rol.capitalize()
@@ -113,11 +114,11 @@ def main(carrito, producto, dinero):
                 elif accion == 3:
                     detalles_productos()
                 elif accion == 4:
-                    dinero, carrito, producto = gestionar_carrito(carrito=carrito,monto_total=dinero, producto=producto)
+                    dinero, carrito, producto, usuario = gestionar_carrito(carrito=carrito,monto_total=dinero, producto=producto, usuario=usuario)
                 elif accion == 5:
                     historial_compras()
                 elif accion == 6:
-                    iniciar_sesion(archivo_json='comprador/usuarios.json')
+                    usuario = iniciar_sesion(archivo_json='comprador/usuarios.json', usuario=usuario)
                 elif accion ==7:
                     rol = "Admin"
                 

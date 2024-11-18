@@ -1,0 +1,12 @@
+[
+    {
+        "compras": {
+            "1": {
+                "producto": "Manzana",
+                "cantidad": 8,
+                "precio": 100
+            }
+        },
+        "usuario": "usuario_prueba"
+    }
+]

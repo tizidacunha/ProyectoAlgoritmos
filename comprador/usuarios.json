@@ -7,6 +7,18 @@
         {
             "usuario": "usuario_prueba2",
             "contrasena": "pepe23545W$$"
+        },
+        {
+            "usuario": "Tiziano1234",
+            "contrasena": "Tiziano1234**"
+        },
+        {
+            "usuario": "Mateo1234",
+            "contrasena": "1234**Mateo"
+        },
+        {
+            "usuario": "Juan",
+            "contrasena": "Juan*123"
         }
     ]
 }
