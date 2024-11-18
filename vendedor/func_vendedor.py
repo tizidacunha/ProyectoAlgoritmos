@@ -439,6 +439,8 @@ def papelera(lista):
 
 def ver_compras():
     
+    #Lee pedidos.json, si el usuario lo desea lo redirige a eliminar_pedidos()
+    
     try:
         with open("pedidos.json","r") as archivo: #lo abro en modo lectura para ver si existe el codigo compra
             compras = json.load(archivo)
@@ -497,6 +499,8 @@ def ver_compras():
 
 
 def Eliminar_pedido():
+    
+    #Modifica pedidos.json
     
     try:
         with open("pedidos.json","r") as archivo: #lo abro en modo lectura para ver si existe el codigo compra
