@@ -436,3 +436,128 @@ def papelera(lista):
         finally:
             nueva_papelera.close()
     return lista
+
+def ver_compras():
+    
+    try:
+        with open("pedidos.json","r") as archivo: #lo abro en modo lectura para ver si existe el codigo compra
+            compras = json.load(archivo)
+            
+            for i in compras:
+                for clave,valor in i.items(): #i = diccionarios dentro de la lista grande del json
+                    
+                    if (clave == "codigo de compra"):
+                        print(f"- Compra: #{valor}\n")
+            
+            es_numero = False
+            while es_numero == False:
+                try:
+                    codigo = int(input("Ingrese el codigo del pedido que desee ver o -1 para salir: "))
+                    print()
+                    es_numero = True
+                except ValueError:
+                    print("Ingrese un numero entero de los que se le imprimio en pantalla")
+                    print()
+                    
+            while codigo != -1:
+                existe = False         
+                                                
+                for i in compras:
+                    for clave,valor in i.items(): #i = diccionarios dentro de la lista grande del json
+                            
+                        if clave == "codigo de compra":
+                            codigos = valor
+                        
+                        if codigos == codigo:
+                            print(f"{clave}: {valor} ")
+                            print()
+                            existe = True
+                
+                if existe == False:
+                    print(f"El codigo: #{codigo} no existe")
+                        
+                        
+                es_numero = False
+                while es_numero == False:
+                    try:
+                        codigo = int(input("Ingrese el codigo del pedido que desee ver o -1 para salir: "))
+                        print()
+                        es_numero = True
+                    except ValueError:
+                        print("Ingrese un numero entero de los que se le imprimio en pantalla")
+                        print()
+            
+            eliminar = input("Desea eliminar algun pedido? ingrese si o no: ").capitalize()
+            if eliminar == "Si":
+                Eliminar_pedido()
+                        
+            
+    except (FileNotFoundError, json.JSONDecodeError):
+        print("El archivo de pedidos esta vacio")
+
+
+def Eliminar_pedido():
+    
+    try:
+        with open("pedidos.json","r") as archivo: #lo abro en modo lectura para ver si existe el codigo compra
+            compras = json.load(archivo)
+            
+            
+            for i in compras:
+                for clave,valor in i.items(): #i = diccionarios dentro de la lista grande del json
+                    
+                    if (clave == "codigo de compra"):
+                        print(f"- Compra: #{valor}\n")
+            
+            es_numero = False
+            while es_numero == False:
+                try:
+                    codigo = int(input("Ingrese el codigo del pedido que desee eliminar o -1 para salir: "))
+                    print()
+                    es_numero = True
+                except ValueError:
+                    print("Ingrese un numero entero de los que se le imprimio en pantalla")
+                    print()
+                    
+            while codigo != -1:
+                existe = False         
+                                                
+                for i in compras[:]: #creo copia de compras para eliminar mientras itero
+                        
+                    if i.get("codigo de compra") == codigo: #el valor de la key codigo de compra
+                        compras.remove(i)
+                        Se_elimino = True
+                        print("Pedido eliminado")
+                        print()
+                        existe = True
+
+
+                if existe == False:
+                    print(f"El codigo: #{codigo} no existe")
+                        
+                
+                
+                es_numero = False
+                while es_numero == False:
+                    try:
+                        codigo = int(input("Ingrese el codigo del pedido que desee eliminar o -1 para salir: "))
+                        print()
+                        es_numero = True
+                    except ValueError:
+                        print("Ingrese un numero entero de los que se le imprimio en pantalla")
+                        print()
+                    
+                            
+        
+    except (FileNotFoundError, json.JSONDecodeError):
+        print("El archivo de pedidos esta vacio")
+        Se_elimino = False
+        
+    if Se_elimino == True:
+            
+        try:
+            with open("pedidos.json","w") as archivo: #lo abro en modo lectura para ver si existe el codigo compra
+                json.dump(compras,archivo,indent=4)
+                                
+        except (FileNotFoundError, json.JSONDecodeError):
+            print("Error")

@@ -1,11 +1,11 @@
 [
     {
-        "codigo de compra": 1342,
+        "codigo de compra": 3772,
         "compras": {
             "1": {
-                "producto": "Manzana",
-                "cantidad": 5,
-                "precio": 100
+                "producto": "Sprite",
+                "cantidad": 1,
+                "precio": 1000
             }
         },
         "usuario": "usuario_prueba"
