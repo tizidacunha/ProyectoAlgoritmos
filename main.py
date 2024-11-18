@@ -90,10 +90,7 @@ def main(carrito, producto, dinero):
     os.system('cls')
     accion = 0
     usuario = ""
-
-    rol = input("Ingrese quien sos: comprador o admin: ")
-    rol = rol.capitalize()
-    
+      
     rol = obtener_rol_valido()
     
     while accion != -1:
@@ -160,7 +157,7 @@ def main(carrito, producto, dinero):
                     elif accion == 4:
                         Eliminar_productos(producto)
                     elif accion == 5:
-                        estadisticas(mas_vendido="Manzana", menos_vendido="Pera", lista=producto, banco=dinero)
+                        estadisticas(banco=dinero, lista=producto )
                     elif accion == 6:
                         ver_compras()
                     elif accion == 7:
