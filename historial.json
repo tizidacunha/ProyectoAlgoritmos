@@ -5,8 +5,38 @@
                 "producto": "Manzana",
                 "cantidad": 8,
                 "precio": 100
+            },
+            "2": {
+                "producto": "Sprite",
+                "cantidad": 1,
+                "precio": 1000
             }
         },
         "usuario": "usuario_prueba"
+    },
+    {
+        "compras": {
+            "1": {
+                "producto": "Juego de ollas",
+                "cantidad": 30,
+                "precio": 30
+            }
+        },
+        "usuario": "mateo"
+    },
+    {
+        "compras": {
+            "1": {
+                "producto": "Sprite",
+                "cantidad": 4,
+                "precio": 1000
+            },
+            "2": {
+                "producto": "Iphone 12",
+                "cantidad": 20,
+                "precio": 15
+            }
+        },
+        "usuario": "mate"
     }
 ]

@@ -3,7 +3,7 @@ import os
 #Aca se importaran todas las funciones del comprador y del vendedor
 
 from comprador.func_comprador import comprar_producto, ver_productos, detalles_productos, gestionar_carrito, historial_compras, pago, iniciar_sesion, buscar_producto_similar
-from vendedor.func_vendedor import Agregar_productos, Eliminar_productos, Editar_productos, Gestion_de_pedidos, estadisticas, papelera
+from vendedor.func_vendedor import Agregar_productos, Eliminar_productos, Editar_productos, Gestion_de_pedidos, estadisticas, papelera, ver_compras, Eliminar_pedido
 
 producto = [
     ["Manzana", 10, 100],        # Comida
@@ -46,7 +46,7 @@ def menu_vendedor():
     print("                                                       Bienvenido al E-Commerce!!! ")
     print("")
     print('''Estas son las opciones disponibles: 
-    1. Agregar un Producto || 2. Ver Stock || 3. Editar Producto || 4. Eliminar Producto || 5. Estadísticas || 6. Gestionar Pedidos || 7. Ver Papelera || 8. Ir a Comprador''')
+    1. Agregar un Producto || 2. Ver Stock || 3. Editar Producto || 4. Eliminar Producto || 5. Estadísticas || 6. Ver Pedidos || 7. Ver Papelera || 8. Eliminar Pedidos || 9. Ir a Comprador ''')
     print("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------")
 
 
@@ -143,9 +143,9 @@ def main(carrito, producto, dinero):
             if clave == contrasena:  
 
                 menu_vendedor()
-                accion = obtener_opcion_valida(1,8)
+                accion = obtener_opcion_valida(1,9)
                     
-                while accion >= 1 and accion <= 8 and rol != "Comprador":
+                while accion >= 1 and accion <= 9 and rol != "Comprador":
                     
                 
                     if accion == 1:
@@ -162,18 +162,21 @@ def main(carrito, producto, dinero):
                     elif accion == 5:
                         estadisticas(mas_vendido="Manzana", menos_vendido="Pera", lista=producto, banco=dinero)
                     elif accion == 6:
-                        Gestion_de_pedidos(["Sprite", 4, 1000],"faresmateo")
+                        ver_compras()
                     elif accion == 7:
                         papelera(producto)
                     elif accion == 8:
+                        Eliminar_pedido()
+                    
+                    elif accion == 9:
                         rol = "Comprador"
 
                     else:
                         print("accion no valida")
                 
-                    if accion != 8 and accion != -1:
+                    if accion != 9 and accion != -1:
                         menu_vendedor()
-                        accion = obtener_opcion_valida(1,8)
+                        accion = obtener_opcion_valida(1,9)
                                 
             else:
                 print("Ladron!! ")
