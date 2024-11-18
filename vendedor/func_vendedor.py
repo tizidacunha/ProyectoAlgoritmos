@@ -2,6 +2,7 @@
 import random
 import json
 
+
 def Agregar_productos(lista):
     
     #Parametro de entrada: lista (matriz de productos).
@@ -214,13 +215,21 @@ def Gestion_de_pedidos(historial_carrito,usuario):
     except (FileNotFoundError, json.JSONDecodeError):
         codigo_compra = random.randint(1000,9999)
     
-    venta = {
-        
-        "codigo de compra" : codigo_compra,
-        "producto" : historial_carrito[0],
-        "cantidad" : historial_carrito[1],
-        "precio" : historial_carrito[2],
-        "usuario" : usuario,
+
+
+    venta ={
+        "codigo de compra": codigo_compra
+        ,
+        "compras": {
+            
+            str(i+1): {
+                "producto": producto,
+                "cantidad": cantidad,
+                "precio": precio
+            }
+            for i, (producto, cantidad, precio) in enumerate(historial_carrito)
+        },
+        "usuario": usuario
     }
         
     try:
@@ -240,6 +249,8 @@ def Gestion_de_pedidos(historial_carrito,usuario):
     except IOError:
         print("Error de generacion de archivo")
 
+
+
 #---------------------------------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------------------------------
@@ -257,17 +268,21 @@ def estadisticas(banco,lista):
             productos = []
             
             for i in compras:
-                existia = False
-                nombre = i.get("producto") 
-                cantidad = i.get("cantidad")
-                    
-                for j in productos:
-                    if nombre == j[0]: #verifico si ya existe en la lista de productos, sumo la cantidad
-                        j[1] += cantidad
-                        existia = True
-                    
-                if existia == False: #si existia sigue en false significa que no esta, por ende agrego la lista con el nombre y cant.
-                    productos.append([nombre,cantidad])
+                for clave,valor in i.items():
+                    if clave == "compras":
+                        for indice,contenido in valor.items():
+                             
+                            existia = False
+                            nombre = contenido.get("producto") 
+                            cantidad = contenido.get("cantidad")
+                                
+                            for j in productos:
+                                if nombre == j[0]: #verifico si ya existe en la lista de productos, sumo la cantidad
+                                    j[1] += cantidad
+                                    existia = True
+                                
+                            if existia == False: #si existia sigue en false significa que no esta, por ende agrego la lista con el nombre y cant.
+                                productos.append([nombre,cantidad])
                         
                 
 
@@ -328,7 +343,6 @@ def estadisticas(banco,lista):
         print(clave,";",valor)
     
     return estadisticas
-
 
 #---------------------------------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------------------------------

@@ -1,5 +1,6 @@
 import re
-
+from vendedor.func_vendedor import Gestion_de_pedidos
+import random 
 
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -234,7 +235,7 @@ def detalles_productos():
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-def gestionar_carrito(carrito, monto_total, producto):
+def gestionar_carrito(carrito, monto_total, producto, usuario):
     opcion = 1
     if not carrito:
         opcion = "5"
@@ -327,7 +328,7 @@ def gestionar_carrito(carrito, monto_total, producto):
                 print("Todos los productos han sido eliminados del carrito y las cantidades han sido repuestas en la lista de productos.")
 
             elif opcion == "4":
-                monto_total, carrito, producto = pago(carrito)
+                monto_total, carrito, usuario = pago(carrito, usuario)
             
             elif opcion == '5':
                 # Salir del carrito
@@ -336,7 +337,7 @@ def gestionar_carrito(carrito, monto_total, producto):
             else:
                 print("Opción no válida. Intente de nuevo.")
 
-    return monto_total, carrito, producto
+    return monto_total, carrito, producto, usuario
 
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -387,35 +388,46 @@ def validar_contraseña():
 
 
 
-def iniciar_sesion(archivo_json):
-    datos = cargar_datos(archivo_json)
+def iniciar_sesion(archivo_json, usuario):
+    if usuario:
+        print("Usted ya ha iniciado sesion!")
+        accion = input("Desea cerrar sesion ? si o no: ").capitalize()
+        if accion == "Si":
+            usuario = ""
 
-    crear_iniciar = input("¿Desea crear cuenta (1) o iniciar sesión (2)? -1 para finalizar: ")
-
-    if crear_iniciar == "1":
-        usuario = validar_usuario()
-        contrasena = validar_contraseña()
-        
-        if any(u['usuario'] == usuario for u in datos["usuarios"]):
-            print("El usuario ya existe. Intente con otro nombre.")
-        else:
-            datos["usuarios"].append({"usuario": usuario, "contrasena": contrasena})
-            guardar_datos(archivo_json, datos)
-            print(f"Su cuenta ha sido creada con el usuario: {usuario}")
-
-    elif crear_iniciar == "2":
-        usuario = input("Ingrese su nombre de usuario: ")
-        contrasena = input("Ingrese su contraseña: ")
-
-        if any(u["usuario"] == usuario and u["contrasena"] == contrasena for u in datos["usuarios"]):
-            print("¡Bienvenido!")
-        else:
-            print("Usuario o contraseña incorrectos.")
-
-    elif crear_iniciar == "-1":
-        print("Programa finalizado.")
     else:
-        print("Opción no válida. Intente nuevamente.")
+
+        datos = cargar_datos(archivo_json)
+
+        crear_iniciar = input("¿Desea crear cuenta (1) o iniciar sesión (2)? -1 para finalizar: ")
+
+        if crear_iniciar == "1":
+            usuario = validar_usuario()
+            contrasena = validar_contraseña()
+            
+            if any(u['usuario'] == usuario for u in datos["usuarios"]):
+                print("El usuario ya existe. Intente con otro nombre.")
+            else:
+                datos["usuarios"].append({"usuario": usuario, "contrasena": contrasena})
+                guardar_datos(archivo_json, datos)
+                print(f"Su cuenta ha sido creada con el usuario: {usuario}")
+
+        elif crear_iniciar == "2":
+            usuario = input("Ingrese su nombre de usuario: ")
+            contrasena = input("Ingrese su contraseña: ")
+
+            if any(u["usuario"] == usuario and u["contrasena"] == contrasena for u in datos["usuarios"]):
+                print("¡Bienvenido!")
+            else:
+                print("Usuario o contraseña incorrectos.")
+
+        elif crear_iniciar == "-1":
+            print("Programa finalizado.")
+        else:
+            print("Opción no válida. Intente nuevamente.")
+
+
+    return usuario
 
 
 
@@ -423,7 +435,7 @@ def iniciar_sesion(archivo_json):
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-def pago(carrito):
+def pago(carrito, usuario):
     monto_total = 0
     for i in carrito:
         monto_total += i[1] * i[2]
@@ -431,25 +443,95 @@ def pago(carrito):
     print(f"El monto total es: ${monto_total}")
     opcion = input("Desea pagar? ").lower()
     if opcion == "si":
-        print("Para pagar necesita iniciar sesion o registrarse")
-        iniciar_sesion(archivo_json='comprador/usuarios.json')
+        if usuario == "" or not usuario:
+
+            print("Para pagar necesita iniciar sesion o registrarse")
+            print("carrito: " ,carrito)
+            usuario = iniciar_sesion(archivo_json='comprador/usuarios.json', usuario=usuario)
+        
+
+        historial_compras(carrito, usuario)
+        Gestion_de_pedidos(carrito, usuario)
 
         print("Gracias por su compra!!")
         carrito.clear()
     else:
         print("Vuelva pronto!!")
     
-    return monto_total, carrito
+    return monto_total, carrito, usuario
 
 
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+def historial_compras(historial_carrito, usuario):
+
+    try:
+        # Intentar leer el archivo existente
+        try:
+            with open("historial.json", "r") as archivo:
+                historial = json.load(archivo)
+        except (FileNotFoundError, json.JSONDecodeError):
+            historial = []
+        
+        # Buscar si el usuario ya existe
+        usuario_existe = False
+        for entrada in historial:
+            if entrada["usuario"] == usuario:
+                usuario_existe = True
+                # Obtener el último número de compra
+                ultimos_numeros = [int(k) for k in entrada["compras"].keys()]
+                ultimo_numero = max(ultimos_numeros) if ultimos_numeros else 0
+                
+                # Revisar cada nuevo producto
+                for producto, cantidad, precio in historial_carrito:
+                    producto_encontrado = False
+                    
+                    # Buscar si el producto ya existe en el historial del usuario
+                    for num_compra, detalles in entrada["compras"].items():
+                        if detalles["producto"] == producto:
+                            # Actualizar cantidad del producto existente
+                            detalles["cantidad"] += cantidad
+                            # Actualizar precio si es diferente
+                            if detalles["precio"] != precio:
+                                detalles["precio"] = precio
+                            producto_encontrado = True
+                            break
+                    
+                    # Si el producto no existe, agregarlo como nuevo
+                    if not producto_encontrado:
+                        ultimo_numero += 1
+                        entrada["compras"][str(ultimo_numero)] = {
+                            "producto": producto,
+                            "cantidad": cantidad,
+                            "precio": precio
+                        }
+                break
+        
+        # Si el usuario no existe, crear nueva entrada
+        if not usuario_existe:
+            nueva_venta = {
+                "compras": {
+                    str(i+1): {
+                        "producto": producto,
+                        "cantidad": cantidad,
+                        "precio": precio
+                    }
+                    for i, (producto, cantidad, precio) in enumerate(historial_carrito)
+                },
+                "usuario": usuario
+            }
+            historial.append(nueva_venta)
+        
+        # Guardar el historial actualizado
+        with open("historial.json", "w") as archivo:
+            json.dump(historial, archivo, indent=4)
+            
+    except IOError as e:
+        print(f"Error al manejar el archivo: {e}")
+    except Exception as e:
+        print(f"Error inesperado: {e}")
 
 
-def historial_compras():
-    print("Proximamente...")
-    #Esta funcion permitira que el comprador tenga un registro de sus compras y las pueda volver a repetir
-    #Para esta funcion se necesita tener un archivo de datos, algo que agregaremos para la segunda entrega
-    pass
+historial_compras(["Manzana", 10, 100], "tiziano")
