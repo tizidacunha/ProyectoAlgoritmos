@@ -56,6 +56,8 @@ def Agregar_productos(lista):
         while not (nombre.isalpha()) and nombre != "-1": #para revisar que el nombre del producto ingresado no sea un numero
             print("Ingrese un nombre de producto en letras: ")
             nombre = input("Ingresa el nombre del producto, si desea terminar ingrese -1: ")
+
+    input("Presione Enter para continuar")
     return lista
 
 #---------------------------------------------------------------------------------------------------------------------------------------------
@@ -103,7 +105,9 @@ def Eliminar_productos(lista):
         print("Error de generacion de archivo")
     finally:
         Archivo_papelera.close()
-        
+
+
+    input("Presione Enter para continuar")   
     return lista
 
 #---------------------------------------------------------------------------------------------------------------------------------------------
@@ -185,6 +189,7 @@ def Editar_productos(lista):
             print("Ingrese un nombre de producto en letras: ")
             nombre = input("Ingresa el nombre del producto, si desea terminar ingrese -1: ")
     
+    input("Presione Enter para continuar")
     return lista
 
 #---------------------------------------------------------------------------------------------------------------------------------------------
@@ -245,7 +250,8 @@ def Gestion_de_pedidos(historial_carrito,usuario):
         
         with open("pedidos.json","w") as archivo:
             json.dump(pedidos,archivo, indent=4)
-            
+
+        input("Presione Enter para continuar")       
     except IOError:
         print("Error de generacion de archivo")
 
@@ -305,7 +311,7 @@ def estadisticas(banco,lista):
             menos_vendido = ", ".join(menos_vendido)
             
             
-                              
+        input("Presione Enter para continuar")                      
     except (FileNotFoundError, json.JSONDecodeError):
         print("Error archivo vacio")
     
@@ -335,13 +341,14 @@ def estadisticas(banco,lista):
         
         print("")
         estadisticas.update(precios_y_stocks)
-        
+
     except IndexError:
         print("No hay productos en el almacen")
     
     for clave,valor in estadisticas.items():
         print(clave,";",valor)
-    
+        
+    input("Presione Enter para continuar")
     return estadisticas
 
 #---------------------------------------------------------------------------------------------------------------------------------------------
@@ -435,6 +442,8 @@ def papelera(lista):
             print("Error de generacion de archivo")
         finally:
             nueva_papelera.close()
+    
+    input("Presione Enter para continuar")
     return lista
 
 def ver_compras():
@@ -493,7 +502,7 @@ def ver_compras():
             if eliminar == "Si":
                 Eliminar_pedido()
                         
-            
+        input("Presione Enter para continuar")     
     except (FileNotFoundError, json.JSONDecodeError):
         print("El archivo de pedidos esta vacio")
 
@@ -552,7 +561,7 @@ def Eliminar_pedido():
                         print()
                     
                             
-        
+
     except (FileNotFoundError, json.JSONDecodeError):
         print("El archivo de pedidos esta vacio")
         Se_elimino = False
@@ -562,6 +571,7 @@ def Eliminar_pedido():
         try:
             with open("pedidos.json","w") as archivo: #lo abro en modo lectura para ver si existe el codigo compra
                 json.dump(compras,archivo,indent=4)
-                                
+                +
+            input("Presione Enter para continuar")                   
         except (FileNotFoundError, json.JSONDecodeError):
             print("Error")

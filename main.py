@@ -59,7 +59,7 @@ def menu_comprador():
     print("                                                     Bienvenido al E-Commerce!!! ")
     print("")
     print('''Estas son las opciones disponibles: 
-    1. Comprar Productos || 2. Buscar Producto || 3. Detalles de Productos || 4. Carrito || 5. Historial || Historial Compra || 6. Iniciar Session || 7. Ir a Administrador''')
+    1. Comprar Productos || 2. Buscar Producto || 3. Detalles de Productos || 4. Carrito || 5. Historial Compra || 6. Iniciar Session || 7. Ir a Administrador''')
     print("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------")
 
 
@@ -113,7 +113,7 @@ def main(carrito, producto, dinero):
                 elif accion == 4:
                     dinero, carrito, producto, usuario = gestionar_carrito(carrito=carrito,monto_total=dinero, producto=producto, usuario=usuario)
                 elif accion == 5:
-                    historial_compras()
+                    usuario = historial_compras(carrito, usuario)
                 elif accion == 6:
                     usuario = iniciar_sesion(archivo_json='comprador/usuarios.json', usuario=usuario)
                 elif accion ==7:
