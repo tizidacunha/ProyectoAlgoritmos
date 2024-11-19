@@ -571,7 +571,7 @@ def Eliminar_pedido():
         try:
             with open("pedidos.json","w") as archivo: #lo abro en modo lectura para ver si existe el codigo compra
                 json.dump(compras,archivo,indent=4)
-                +
+                
             input("Presione Enter para continuar")                   
         except (FileNotFoundError, json.JSONDecodeError):
             print("Error")
