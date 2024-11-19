@@ -38,7 +38,6 @@ dinero = 0
 carrito = []
 
 
-                      
 def menu_vendedor():
     os.system('cls')
     print()

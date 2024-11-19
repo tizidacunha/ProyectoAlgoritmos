@@ -19,6 +19,10 @@
         {
             "usuario": "Juan",
             "contrasena": "Juan*123"
+        },
+        {
+            "usuario": "tiziano",
+            "contrasena": "Hola1234**"
         }
     ]
 }
