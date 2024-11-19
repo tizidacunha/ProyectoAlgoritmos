@@ -485,51 +485,74 @@ def validar_contraseña():
 
 
 def iniciar_sesion(archivo_json, usuario):
-   """
-   Gestiona el inicio de sesión y registro de usuarios.
-   """
-   # iniciar_sesion():
+    """
+    Gestiona el inicio de sesión y registro de usuarios.
+    """
+    # iniciar_sesion():
     # - Entrada: archivo JSON de usuarios, usuario actual
     # - Salida: usuario actualizado (nuevo, cerrado sesión, o sin cambios)
 
-   if usuario:
-       print("Usted ya ha iniciado sesion!")
-       accion = input("Desea cerrar sesion ? si o no: ").capitalize()
-       if accion == "Si":
-           usuario = ""
-           print("Se cerro sesion correctamente.")
-   else:
-       datos = cargar_datos(archivo_json)
+    if usuario:
+        print("Usted ya ha iniciado sesión!")
+        accion = input("¿Desea cerrar sesión? si o no: ").capitalize()
+        if accion == "Si":
+            usuario = ""
+            print("Se cerró sesión correctamente.")
+    else:
+        datos = cargar_datos(archivo_json)
 
-       crear_iniciar = input("¿Desea crear cuenta (1) o iniciar sesión (2)? -1 para finalizar: ")
+        crear_iniciar = input("¿Desea crear cuenta (1) o iniciar sesión (2)? -1 para finalizar: ")
 
-       if crear_iniciar == "1":
-           usuario = validar_usuario()
-           contrasena = validar_contraseña()
-           
-           if any(u['usuario'] == usuario for u in datos["usuarios"]):
-               print("El usuario ya existe. Intente con otro nombre.")
-           else:
-               datos["usuarios"].append({"usuario": usuario, "contrasena": contrasena})
-               guardar_datos(archivo_json, datos)
-               print(f"Su cuenta ha sido creada con el usuario: {usuario}")
+        if crear_iniciar == "1":
+            usuario = validar_usuario()
+            contrasena = validar_contraseña()
+            
+            existe = False
+            for u in datos["usuarios"]:
+                if u["usuario"] == usuario:
+                    existe = True
+                    break
 
-       elif crear_iniciar == "2":
-           usuario = input("Ingrese su nombre de usuario: ")
-           contrasena = input("Ingrese su contraseña: ")
+            if existe:
+                print("El usuario ya existe. Intente con otro nombre.")
+            else:
+                datos["usuarios"].append({"usuario": usuario, "contrasena": contrasena})
+                guardar_datos(archivo_json, datos)
+                print(f"Su cuenta ha sido creada con el usuario: {usuario}")
+                
+        elif crear_iniciar == "2":
+            contador = 1
+            ingreso = False
+            
+            while contador <= 3 and ingreso == False:
+                usuario = input("Ingrese su nombre de usuario: ")
+                contrasena = input("Ingrese su contraseña: ")
 
-           if any(u["usuario"] == usuario and u["contrasena"] == contrasena for u in datos["usuarios"]):
-               print("¡Bienvenido!")
-           else:
-               print("Usuario o contraseña incorrectos.")
+                autenticado = False
+                for u in datos["usuarios"]:
+                    if u["usuario"] == usuario and u["contrasena"] == contrasena:
+                        autenticado = True
+                        break
 
-       elif crear_iniciar == "-1":
-           print("Programa finalizado.")
-       else:
-           print("Opción no válida. Intente nuevamente.")
+                if autenticado:
+                    print("¡Bienvenido!")
+                    ingreso = True
+                else:
+                    print("Usuario o contraseña incorrectos.")
+                    usuario = ""
+                    contador += 1
+                    print(f"Le quedan {4-contador} intentos! ")
+            
+            if not autenticado:
+                print("Se le acabaron los intentos!!")      
+                
+        elif crear_iniciar == "-1":
+            print("Programa finalizado.")
+        else:
+            print("Opción no válida. Intente nuevamente.")
 
-   input("Presione Enter para continuar")
-   return usuario
+    input("Presione Enter para continuar")
+    return usuario
 
 
 
@@ -580,115 +603,101 @@ def pago(carrito, usuario):
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def historial_compras(historial_carrito, usuario):
-   """
-   Gestiona el historial de compras de un usuario, 
-   permitiendo registro y visualización de compras realizadas.
-   """
-   # Parámetros de entrada:
+    """
+    Gestiona el historial de compras de un usuario, 
+    permitiendo registro y visualización de compras realizadas.
+    """
+    # Parámetros de entrada:
     # - historial_carrito: Lista de compras actuales [producto, cantidad, precio]
     # - usuario: Nombre de usuario actual
 
     # Parámetros de salida:
     # - usuario: Nombre de usuario (puede cambiar si inicia sesión)
 
-   inicio = False
-   try:
-       if usuario == "" or not usuario:
-           print("Para ver tu historial de compras debe iniciar sesion.")
-           accion = input("Desea hacerlo? Ingrese si o no: ").capitalize()
-           if accion == "Si":
-               usuario = iniciar_sesion(archivo_json='comprador/usuarios.json', usuario=usuario)
-               inicio = True
-           else:
-               print("Muchas Gracias")
-               input("Presione Enter para continuar")
-       
-       if usuario != "":       
-           # Intentar leer el archivo existente
-           try:
-               with open("historial.json", "r") as archivo:
-                   historial = json.load(archivo)
-           except (FileNotFoundError, json.JSONDecodeError):
-               historial = []
-           
-           # Buscar si el usuario ya existe
-           usuario_existe = False
-           for entrada in historial:
-               if entrada["usuario"] == usuario:
-                   usuario_existe = True
-                   # Obtener el último número de compra
-                   ultimos_numeros = [int(k) for k in entrada["compras"].keys()]
-                   ultimo_numero = max(ultimos_numeros) if ultimos_numeros else 0
-                   
-                   # Revisar cada nuevo producto
-                   for producto, cantidad, precio in historial_carrito:
-                       producto_encontrado = False
-                       
-                       # Buscar si el producto ya existe en el historial del usuario
-                       for num_compra, detalles in entrada["compras"].items():
-                           if detalles["producto"] == producto:
-                               # Actualizar cantidad del producto existente
-                               detalles["cantidad"] += cantidad
-                               # Actualizar precio si es diferente
-                               if detalles["precio"] != precio:
-                                   detalles["precio"] = precio
-                               producto_encontrado = True
-                               break
-                       
-                       # Si el producto no existe, agregarlo como nuevo
-                       if not producto_encontrado:
-                           ultimo_numero += 1
-                           entrada["compras"][str(ultimo_numero)] = {
-                               "producto": producto,
-                               "cantidad": cantidad,
-                               "precio": precio
-                           }
-                   break
-           
-           # Si el usuario no existe, crear nueva entrada
-           if not usuario_existe:
-               nueva_venta = {
-                   "compras": {
-                       str(i+1): {
-                           "producto": producto,
-                           "cantidad": cantidad,
-                           "precio": precio
-                       }
-                       for i, (producto, cantidad, precio) in enumerate(historial_carrito)
-                   },
-                   "usuario": usuario
-               }
-               historial.append(nueva_venta)
-           
-           # Guardar el historial actualizado
-           with open("historial.json", "w") as archivo:
-               json.dump(historial, archivo, indent=4)
-               
-           
-           print(f"\nHistorial de compras para el usuario {usuario}:")
-           print("-" * 50)
-           
-           # Buscar el historial del usuario actual
-           for entrada in historial:
-               if entrada["usuario"] == usuario:
-                   total_gastado = 0
-                   for num_compra, detalles in entrada["compras"].items():
-                       subtotal = detalles["cantidad"] * detalles["precio"]
-                       total_gastado += subtotal
-                       print(f"Compra #{num_compra}:")
-                       print(f"  Producto: {detalles['producto']}")
-                       print(f"  Cantidad: {detalles['cantidad']}")
-                       print(f"  Precio unitario: ${detalles['precio']:.2f}")
-                       print(f"  Subtotal: ${subtotal:.2f}")
-                       print("-" * 30)
-                   print(f"Total gastado: ${total_gastado:.2f}")
-                   break
+    try:
+        if not usuario:
+            print("Para ver tu historial de compras debes iniciar sesión.")
+            accion = input("¿Desea hacerlo? Ingrese si o no: ").capitalize()
+            if accion == "Si":
+                usuario = iniciar_sesion(archivo_json='comprador/usuarios.json', usuario=usuario)
+            else:
+                print("Muchas gracias")
+                input("Presione Enter para continuar")
+                return usuario
 
-           input("Presione Enter para continuar")
+        if usuario:       
+            # Intentar leer el archivo existente
+            try:
+                with open("historial.json", "r") as archivo:
+                    historial = json.load(archivo)
+            except (FileNotFoundError, json.JSONDecodeError):
+                historial = []
+            
+            # Buscar el historial del usuario
+            entrada_usuario = next((entrada for entrada in historial if entrada["usuario"] == usuario), None)
+            
+            if entrada_usuario:
+                # Obtener el último número de compra
+                ultimos_numeros = [int(k) for k in entrada_usuario["compras"].keys()]
+                ultimo_numero = max(ultimos_numeros) if ultimos_numeros else 0
 
-       return usuario
-   
-   except IOError as e: #Error de archivo
-       print(f"Error al manejar el archivo: {e}")
-   except Exception as e:
-       print(f"Error inesperado: {e}")
+                # Actualizar o agregar productos al historial del usuario
+                for producto, cantidad, precio in historial_carrito:
+                    for num_compra, detalles in entrada_usuario["compras"].items():
+                        if detalles["producto"] == producto:
+                            # Actualizar cantidad y precio si ya existe
+                            detalles["cantidad"] += cantidad
+                            detalles["precio"] = precio
+                            break
+                    else:
+                        # Producto nuevo
+                        ultimo_numero += 1
+                        entrada_usuario["compras"][str(ultimo_numero)] = {
+                            "producto": producto,
+                            "cantidad": cantidad,
+                            "precio": precio
+                        }
+            else:
+                # Si el usuario no existe, crear una nueva entrada
+                nueva_venta = {
+                    "compras": {
+                        str(i + 1): {
+                            "producto": producto,
+                            "cantidad": cantidad,
+                            "precio": precio
+                        }
+                        for i, (producto, cantidad, precio) in enumerate(historial_carrito)
+                    },
+                    "usuario": usuario
+                }
+                historial.append(nueva_venta)
+            
+            # Guardar el historial actualizado
+            with open("historial.json", "w") as archivo:
+                json.dump(historial, archivo, indent=4)
+            
+            # Mostrar el historial actualizado
+            print(f"\nHistorial de compras para el usuario {usuario}:")
+            print("-" * 50)
+
+            entrada_usuario = next((entrada for entrada in historial if entrada["usuario"] == usuario), None)
+            if entrada_usuario:
+                total_gastado = 0
+                for num_compra, detalles in entrada_usuario["compras"].items():
+                    subtotal = detalles["cantidad"] * detalles["precio"]
+                    total_gastado += subtotal
+                    print(f"Compra #{num_compra}:")
+                    print(f"  Producto: {detalles['producto']}")
+                    print(f"  Cantidad: {detalles['cantidad']}")
+                    print(f"  Precio unitario: ${detalles['precio']:.2f}")
+                    print(f"  Subtotal: ${subtotal:.2f}")
+                    print("-" * 30)
+                print(f"Total gastado: ${total_gastado:.2f}")
+
+            input("Presione Enter para continuar")
+        return usuario
+
+    except IOError as e:  # Error de archivo
+        print(f"Error al manejar el archivo: {e}")
+    except Exception as e:
+        print(f"Error inesperado: {e}")
