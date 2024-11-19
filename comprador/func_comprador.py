@@ -106,7 +106,7 @@ def comprar_producto(producto, carrito):
         if not encontrado:
             print("Producto no encontrado, ingrese otro.")
         
-        nombre = input("Ingrese el nombre del producto que quiera comprar o -1 para terminar: ").capitalize()
+        nombre = input("Ingrese el nombre del producto que quiera comprar o -1 para terminar: ").title()
 
     # Actualizar el carrito con las compras realizadas
     compras_realizadas = actualizar_carrito(carrito=carrito, compras_realizadas=compras_realizadas)

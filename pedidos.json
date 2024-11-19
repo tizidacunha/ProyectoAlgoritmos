@@ -9,5 +9,26 @@
             }
         },
         "usuario": "usuario_prueba"
+    },
+    {
+        "codigo de compra": 3485,
+        "compras": {
+            "1": {
+                "producto": "Planta Decorativa",
+                "cantidad": 1,
+                "precio": 100
+            },
+            "2": {
+                "producto": "Juguete Lego",
+                "cantidad": 3,
+                "precio": 100
+            },
+            "3": {
+                "producto": "Juego De Ollas",
+                "cantidad": 4,
+                "precio": 30
+            }
+        },
+        "usuario": "mate"
     }
 ]
