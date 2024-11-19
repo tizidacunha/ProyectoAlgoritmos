@@ -18,6 +18,8 @@ def Recomendar_productos(compras_realizadas, usuario, historial_compra):
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def actualizar_carrito(compras_realizadas, carrito):
+    """
+    """
     for i in compras_realizadas:
         producto_nombre = i[0]  # Nombre del producto
         producto_cantidad = i[1]  # Cantidad comprada del producto
@@ -133,6 +135,7 @@ def buscar_producto_similar(producto, carrito):
                 carrito, producto = comprar_producto(producto, carrito)
             else:
                 print("Muchas Gracias")
+                input("Presione Enter para continuar")
 
     return carrito
 
@@ -191,7 +194,7 @@ categorias = {
 }
 
 
-def categoria():
+def categoria(producto):
     elegir_categoria = input("Ingrese el nombre de la categoria: ").capitalize()
     for i in categorias.keys():
         if i == elegir_categoria:
@@ -222,12 +225,16 @@ def detalles_productos():
             for linea in lineas:
                 if linea.lower().startswith(producto_buscado.lower()):
                     print(f"Detalle del producto '{producto_buscado}': {linea}")
+                    
+                    input("Presione Enter para continuar")
                     return linea
             
             # Si no se encuentra el producto en el archivo
             print(f"Lo siento, no se encontró el producto '{producto_buscado}' en la lista.")
+        
     except Exception:
         print("El archivo no fue encontrado.")
+
 
 
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -337,6 +344,8 @@ def gestionar_carrito(carrito, monto_total, producto, usuario):
             else:
                 print("Opción no válida. Intente de nuevo.")
 
+        input("Presione Enter para continuar")
+
     return monto_total, carrito, producto, usuario
 
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -394,6 +403,7 @@ def iniciar_sesion(archivo_json, usuario):
         accion = input("Desea cerrar sesion ? si o no: ").capitalize()
         if accion == "Si":
             usuario = ""
+            print("Se cerro sesion correctamente.")
 
     else:
 
@@ -426,7 +436,7 @@ def iniciar_sesion(archivo_json, usuario):
         else:
             print("Opción no válida. Intente nuevamente.")
 
-
+    input("Presione Enter para continuar")
     return usuario
 
 
@@ -458,6 +468,7 @@ def pago(carrito, usuario):
     else:
         print("Vuelva pronto!!")
     
+    input("Presione Enter para continuar")
     return monto_total, carrito, usuario
 
 
@@ -468,70 +479,103 @@ def pago(carrito, usuario):
 def historial_compras(historial_carrito, usuario):
 
     try:
-        # Intentar leer el archivo existente
-        try:
-            with open("historial.json", "r") as archivo:
-                historial = json.load(archivo)
-        except (FileNotFoundError, json.JSONDecodeError):
-            historial = []
-        
-        # Buscar si el usuario ya existe
-        usuario_existe = False
-        for entrada in historial:
-            if entrada["usuario"] == usuario:
-                usuario_existe = True
-                # Obtener el último número de compra
-                ultimos_numeros = [int(k) for k in entrada["compras"].keys()]
-                ultimo_numero = max(ultimos_numeros) if ultimos_numeros else 0
-                
-                # Revisar cada nuevo producto
-                for producto, cantidad, precio in historial_carrito:
-                    producto_encontrado = False
+        if usuario == "" or not usuario:
+            print("Para ver tu historial de compras debe iniciar sesion.")
+            accion = input("Desea hacerlo? Ingrese si o no: ").capitalize()
+            if accion == "Si":
+                usuario = iniciar_sesion(archivo_json='comprador/usuarios.json', usuario=usuario)
+                inicio = True
+            else:
+                print("Muchas Gracias")
+                input("Presione Enter para continuar")
+        if inicio == True:       
+            # Intentar leer el archivo existente
+            try:
+                with open("historial.json", "r") as archivo:
+                    historial = json.load(archivo)
+            except (FileNotFoundError, json.JSONDecodeError):
+                historial = []
+            
+            # Buscar si el usuario ya existe
+            usuario_existe = False
+            for entrada in historial:
+                if entrada["usuario"] == usuario:
+                    usuario_existe = True
+                    # Obtener el último número de compra
+                    ultimos_numeros = [int(k) for k in entrada["compras"].keys()]
+                    ultimo_numero = max(ultimos_numeros) if ultimos_numeros else 0
                     
-                    # Buscar si el producto ya existe en el historial del usuario
-                    for num_compra, detalles in entrada["compras"].items():
-                        if detalles["producto"] == producto:
-                            # Actualizar cantidad del producto existente
-                            detalles["cantidad"] += cantidad
-                            # Actualizar precio si es diferente
-                            if detalles["precio"] != precio:
-                                detalles["precio"] = precio
-                            producto_encontrado = True
-                            break
-                    
-                    # Si el producto no existe, agregarlo como nuevo
-                    if not producto_encontrado:
-                        ultimo_numero += 1
-                        entrada["compras"][str(ultimo_numero)] = {
+                    # Revisar cada nuevo producto
+                    for producto, cantidad, precio in historial_carrito:
+                        producto_encontrado = False
+                        
+                        # Buscar si el producto ya existe en el historial del usuario
+                        for num_compra, detalles in entrada["compras"].items():
+                            if detalles["producto"] == producto:
+                                # Actualizar cantidad del producto existente
+                                detalles["cantidad"] += cantidad
+                                # Actualizar precio si es diferente
+                                if detalles["precio"] != precio:
+                                    detalles["precio"] = precio
+                                producto_encontrado = True
+                                break
+                        
+                        # Si el producto no existe, agregarlo como nuevo
+                        if not producto_encontrado:
+                            ultimo_numero += 1
+                            entrada["compras"][str(ultimo_numero)] = {
+                                "producto": producto,
+                                "cantidad": cantidad,
+                                "precio": precio
+                            }
+                    break
+            
+            # Si el usuario no existe, crear nueva entrada
+            if not usuario_existe:
+                nueva_venta = {
+                    "compras": {
+                        str(i+1): {
                             "producto": producto,
                             "cantidad": cantidad,
                             "precio": precio
                         }
-                break
-        
-        # Si el usuario no existe, crear nueva entrada
-        if not usuario_existe:
-            nueva_venta = {
-                "compras": {
-                    str(i+1): {
-                        "producto": producto,
-                        "cantidad": cantidad,
-                        "precio": precio
-                    }
-                    for i, (producto, cantidad, precio) in enumerate(historial_carrito)
-                },
-                "usuario": usuario
-            }
-            historial.append(nueva_venta)
-        
-        # Guardar el historial actualizado
-        with open("historial.json", "w") as archivo:
-            json.dump(historial, archivo, indent=4)
+                        for i, (producto, cantidad, precio) in enumerate(historial_carrito)
+                    },
+                    "usuario": usuario
+                }
+                historial.append(nueva_venta)
             
+            # Guardar el historial actualizado
+            with open("historial.json", "w") as archivo:
+                json.dump(historial, archivo, indent=4)
+                
+            
+            print(f"\nHistorial de compras para el usuario {usuario}:")
+            print("-" * 50)
+            
+            # Buscar el historial del usuario actual
+            for entrada in historial:
+                if entrada["usuario"] == usuario:
+                    total_gastado = 0
+                    for num_compra, detalles in entrada["compras"].items():
+                        subtotal = detalles["cantidad"] * detalles["precio"]
+                        total_gastado += subtotal
+                        print(f"Compra #{num_compra}:")
+                        print(f"  Producto: {detalles['producto']}")
+                        print(f"  Cantidad: {detalles['cantidad']}")
+                        print(f"  Precio unitario: ${detalles['precio']:.2f}")
+                        print(f"  Subtotal: ${subtotal:.2f}")
+                        print("-" * 30)
+                    print(f"Total gastado: ${total_gastado:.2f}")
+                    break
+
+            input("Presione Enter para continuar")
+
+        return usuario
+    
     except IOError as e:
         print(f"Error al manejar el archivo: {e}")
     except Exception as e:
         print(f"Error inesperado: {e}")
 
 
-historial_compras(["Manzana", 10, 100], "tiziano")
