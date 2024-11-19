@@ -35,6 +35,21 @@
                 "producto": "Iphone 12",
                 "cantidad": 20,
                 "precio": 15
+            },
+            "3": {
+                "producto": "Planta Decorativa",
+                "cantidad": 1,
+                "precio": 100
+            },
+            "4": {
+                "producto": "Juguete Lego",
+                "cantidad": 3,
+                "precio": 100
+            },
+            "5": {
+                "producto": "Juego De Ollas",
+                "cantidad": 4,
+                "precio": 30
             }
         },
         "usuario": "mate"
@@ -42,5 +57,9 @@
     {
         "compras": {},
         "usuario": ""
+    },
+    {
+        "compras": {},
+        "usuario": "lol"
     }
 ]

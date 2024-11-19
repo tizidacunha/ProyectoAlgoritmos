@@ -10,12 +10,7 @@ def Agregar_productos(lista):
     
     """En esta funcion se podra agregar productos"""
     
-    nombre = input("Ingresa el nombre del producto, si desea terminar ingrese -1: ")
-    while (not (nombre.isalpha())) and nombre != "-1": #para revisar que el nombre del producto ingresado no sea un numero
-        print("Ingrese un nombre de producto en letras: ")
-        nombre = input("Ingresa el nombre del producto, si desea terminar ingrese -1: ")
-        
-    nombre = nombre.capitalize()   #Para que el nombre quede registrado solo con la primer letra mayuscula
+    nombre = input("Ingresa el nombre del producto, si desea terminar ingrese -1: ").title()
     
     while nombre != "-1":
         producto_existente = False
@@ -52,10 +47,7 @@ def Agregar_productos(lista):
             
             lista.append([nombre, cantidad, precio])
         
-        nombre = input("Ingresa el nombre del producto, si desea terminar ingrese -1: ")
-        while not (nombre.isalpha()) and nombre != "-1": #para revisar que el nombre del producto ingresado no sea un numero
-            print("Ingrese un nombre de producto en letras: ")
-            nombre = input("Ingresa el nombre del producto, si desea terminar ingrese -1: ")
+        nombre = input("Ingresa el nombre del producto, si desea terminar ingrese -1: ").title()
 
     input("Presione Enter para continuar")
     return lista
@@ -72,10 +64,7 @@ def Eliminar_productos(lista):
     
     lista_auxiliar = []
     
-    nombre = input("Ingrese el nombre del producto que quiera eliminar o -1 para terminar: ")
-    while (not (nombre.isalpha())) and nombre != "-1": #para revisar que el nombre del producto ingresado no sea un numero
-        print("Ingrese un nombre de producto en letras: ")
-        nombre = input("Ingresa el nombre del producto, si desea terminar ingrese -1: ")
+    nombre = input("Ingrese el nombre del producto que quiera eliminar o -1 para terminar: ").title()
     
     while nombre != "-1":
         
@@ -91,10 +80,8 @@ def Eliminar_productos(lista):
         if encontrado == False:
             print("Producto no encontrado")
         
-        nombre = input("Ingrese el nombre del producto que quiera eliminar o -1 para terminar: ") 
-        while (not (nombre.isalpha())) and nombre != "-1": #para revisar que el nombre del producto ingresado no sea un numero
-            print("Ingrese un nombre de producto en letras: ")
-            nombre = input("Ingresa el nombre del producto, si desea terminar ingrese -1: ")
+        nombre = input("Ingrese el nombre del producto que quiera eliminar o -1 para terminar: ").title()
+
     #ENTREGA DEL 80%
     try:
         Archivo_papelera = open("papelera.csv","at")
@@ -120,10 +107,7 @@ def Editar_productos(lista):
     #Parametro de entrada: lista (matriz de productos).
     #Parametro de salida: lista (matriz de productos).
     
-    nombre = input("Ingrese el nombre del producto que quiera editar o -1 para terminar: ")
-    while (not (nombre.isalpha())) and nombre != "-1": #para revisar que el nombre del producto ingresado no sea un numero
-        print("Ingrese un nombre de producto en letras: ")
-        nombre = input("Ingresa el nombre del producto, si desea terminar ingrese -1: ")
+    nombre = input("Ingrese el nombre del producto que quiera editar o -1 para terminar: ").title()
         
     while nombre != "-1":
         encontrado = False
@@ -183,12 +167,8 @@ def Editar_productos(lista):
         if not encontrado:
             print("Producto no encontrado ingrese otro")
 
-        nombre = input("Ingrese el nombre del producto que quiera editar o -1 para terminar: ")
-            
-        while (not (nombre.isalpha())) and nombre != "-1": #para revisar que el nombre del producto ingresado no sea un numero
-            print("Ingrese un nombre de producto en letras: ")
-            nombre = input("Ingresa el nombre del producto, si desea terminar ingrese -1: ")
-    
+        nombre = input("Ingrese el nombre del producto que quiera editar o -1 para terminar: ").title()
+                
     input("Presione Enter para continuar")
     return lista
 

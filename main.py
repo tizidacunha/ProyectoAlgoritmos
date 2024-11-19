@@ -14,23 +14,23 @@ producto = [
     ["Iphone 12", 800, 15],      # Tecnología
     ["Laptop Lenovo", 600, 10],  # Tecnología
     ["Audifonos Sony", 50, 200], # Electrónica
-    ["Silla de oficina", 120, 40],  # Muebles
-    ["Mesa de comedor", 250, 10],   # Muebles
+    ["Silla De Oficina", 120, 40],  # Muebles
+    ["Mesa De Comedor", 250, 10],   # Muebles
     ["Libro Harry Potter", 15, 150], # Libros
     ["Perfume Chanel", 100, 35],    # Cosmética
     ["Moto Yamaha", 3000, 5],      # Vehículos
     ["Bicicleta Montaña", 500, 12], # Deportes
-    ["Raqueta de tenis", 75, 30],   # Deportes
-    ["Helado de vainilla", 3, 500], # Comida
-    ["Juguete LEGO", 40, 100],     # Juguetes
+    ["Raqueta De Tenis", 75, 30],   # Deportes
+    ["Helado De Vainilla", 3, 500], # Comida
+    ["Juguete Lego", 40, 100],     # Juguetes
     ["Cafetera Nespresso", 150, 25], # Electrodomésticos
     ["Colchon King Size", 400, 8],  # Muebles
     ["Guitarra Fender", 600, 7],   # Música
-    ["Planta decorativa", 20, 100], # Hogar
-    ["Juego de ollas", 80, 30],     # Cocina
+    ["Planta Decorativa", 20, 100], # Hogar
+    ["Juego De Ollas", 80, 30],     # Cocina
     ["Camara Canon", 900, 12],     # Electrónica
-    ["Set de toallas", 25, 60],     # Hogar
-    ["Lampara de escritorio", 35, 70] # Hogar
+    ["Set De Toallas", 25, 60],     # Hogar
+    ["Lampara De Escritorio", 35, 70] # Hogar
 ]
 
 contrasena = "admin"
