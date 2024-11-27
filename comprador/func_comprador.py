@@ -64,8 +64,9 @@ def comprar_producto(producto, carrito):
 
     compras_realizadas = []  # Almacena las compras antes de confirmar
 
+    print("")
     nombre = input("Ingrese el nombre del producto que quiera comprar o -1 para terminar: ").title()
-    print(nombre)
+
     while nombre != "-1":
         encontrado = False
         for i in producto:
@@ -73,15 +74,22 @@ def comprar_producto(producto, carrito):
                 encontrado = True
                 
                 if i[1] > 0:
-                    cantidad_compra = int(input(f"¿Cuánto desea comprar? Tenemos {i[1]} en stock: "))
-                    
-                    while cantidad_compra < 1 or cantidad_compra > i[1]:
-                        if cantidad_compra > i[1]:
-                            print(f"No puedes comprar más de lo disponible en stock ({i[1]}).")
-                        else:
-                            print("Ingrese un valor válido.")
-                        cantidad_compra = int(input(f"¿Cuánto desea comprar? Tenemos {i[1]} en stock: "))
-                    
+                    es_numero = False
+                    while not es_numero:
+                        try:
+                            cantidad_compra = int(input(f"¿Cuánto desea comprar? Tenemos {i[1]} en stock: "))
+                            
+                            while cantidad_compra < 1 or cantidad_compra > i[1]:
+                                if cantidad_compra > i[1]:
+                                    print(f"No puedes comprar más de lo disponible en stock ({i[1]}).")
+                                else:
+                                    print("Ingrese un valor válido.")
+                                cantidad_compra = int(input(f"¿Cuánto desea comprar? Tenemos {i[1]} en stock: "))
+                            
+                            es_numero = True
+                        except:
+                            print("Ingresa una cantidad correcta")
+
                     # Verificar si ya existe el producto en compras_realizadas
                     producto_en_carrito = False
                     for compra in compras_realizadas:
@@ -320,6 +328,7 @@ def gestionar_carrito(carrito, monto_total, producto, usuario):
    
    while opcion != "5":
        if not carrito:
+           print("")
            print("El carrito está vacío.")
            opcion = "5"
        else:
@@ -337,12 +346,29 @@ def gestionar_carrito(carrito, monto_total, producto, usuario):
            opcion = input("\nSeleccione una opción (1-4): ")
            
            if opcion == "1":
-               # Modificar cantidad de un producto en el carrito
-               numero_producto = int(input("Ingrese el número del producto que desea modificar: ")) - 1
-               
+               es_numero = False
+
+               while not es_numero:
+                    try:
+
+                        # Modificar cantidad de un producto en el carrito
+                        numero_producto = int(input("Ingrese el número del producto que desea modificar: ")) - 1
+                        es_numero = True
+                    except:
+                        print("Ingrese un numero valido")
+
                if 0 <= numero_producto < len(carrito):   
                    nombre_producto = carrito[numero_producto][0]
-                   nueva_cantidad = int(input(f"Ingrese la nueva cantidad para {nombre_producto}: "))
+                   es_numero = False
+
+                   while not es_numero:
+                        try:
+
+                            nueva_cantidad = int(input(f"Ingrese la nueva cantidad para {nombre_producto}: "))
+                            es_numero = True
+                        except:
+                            print("Ingrese un numero valido")
+                    
 
                    if nueva_cantidad <= 0:
                        print("Debe ingresar una cantidad válida mayor a 0.")
@@ -368,7 +394,15 @@ def gestionar_carrito(carrito, monto_total, producto, usuario):
 
            elif opcion == "2":
                # Eliminar un producto del carrito
-               numero_producto = int(input("Ingrese el número del producto que desea eliminar: ")) - 1
+               es_numero = False
+
+               while not es_numero:
+                    try:
+                        numero_producto = int(input("Ingrese el número del producto que desea eliminar: ")) - 1
+                        es_numero = True
+                    except:
+                        print("Ingrese un numero valido")
+                    
                if 0 <= numero_producto < len(carrito):
                    nueva_cantidad_producto = carrito[numero_producto][1] + producto[numero_producto][1]
                    producto[numero_producto][1] = nueva_cantidad_producto
@@ -397,7 +431,9 @@ def gestionar_carrito(carrito, monto_total, producto, usuario):
 
            elif opcion == "4":
                monto_total, carrito, usuario = pago(carrito, usuario)
-           
+               if not carrito:
+                   opcion = "5"
+                   
            elif opcion == '5':
                # Salir del carrito
                print("Saliendo del gestor del carrito.")
@@ -502,6 +538,8 @@ def iniciar_sesion(archivo_json, usuario):
         datos = cargar_datos(archivo_json)
 
         crear_iniciar = input("¿Desea crear cuenta (1) o iniciar sesión (2)? -1 para finalizar: ")
+        while crear_iniciar != "1" and crear_iniciar != "2" and crear_iniciar != "-1":
+            crear_iniciar = input("Ingrese una opcion valida crear cuenta (1) o iniciar sesión (2)? -1 para finalizar: " )
 
         if crear_iniciar == "1":
             usuario = validar_usuario()
@@ -535,6 +573,7 @@ def iniciar_sesion(archivo_json, usuario):
                         break
 
                 if autenticado:
+                    print("")
                     print("¡Bienvenido!")
                     ingreso = True
                 else:
@@ -551,7 +590,6 @@ def iniciar_sesion(archivo_json, usuario):
         else:
             print("Opción no válida. Intente nuevamente.")
 
-    input("Presione Enter para continuar")
     return usuario
 
 
@@ -579,22 +617,27 @@ def pago(carrito, usuario):
        monto_total += i[1] * i[2]
        
    print(f"El monto total es: ${monto_total}")
-   opcion = input("Desea pagar? ").lower()
+   opcion = input("Desea pagar? Ingrese Si o No: ").lower()
+   while opcion != "si" and opcion != "no":
+       opcion = input("Ingrese una opcion valida: ").lower()
+
    if opcion == "si":
        if usuario == "" or not usuario:
+           print("")
            print("Para pagar necesita iniciar sesion o registrarse")
-           print("carrito: " ,carrito)
            usuario = iniciar_sesion(archivo_json='comprador/usuarios.json', usuario=usuario)
        
-       historial_compras(carrito, usuario)
-       Gestion_de_pedidos(carrito, usuario)
+       historial_compras(carrito, usuario, mostrar_historial=False)
+    #    Gestion_de_pedidos(carrito, usuario)
 
        print("Gracias por su compra!!")
+       print("")
        carrito.clear()
    else:
        print("Vuelva pronto!!")
    
-   input("Presione Enter para continuar")
+       input("Presione Enter para continuar")
+
    return monto_total, carrito, usuario
 
 
@@ -602,28 +645,28 @@ def pago(carrito, usuario):
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-def historial_compras(historial_carrito, usuario):
+def historial_compras(historial_carrito, usuario, mostrar_historial=True):
     """
     Gestiona el historial de compras de un usuario, 
     permitiendo registro y visualización de compras realizadas.
+    
+    Parámetros:
+    - historial_carrito: Lista de compras actuales [producto, cantidad, precio]
+    - usuario: Nombre de usuario actual
+    - mostrar_historial: Booleano que controla si se muestra el historial por pantalla
     """
-    # Parámetros de entrada:
-    # - historial_carrito: Lista de compras actuales [producto, cantidad, precio]
-    # - usuario: Nombre de usuario actual
-
-    # Parámetros de salida:
-    # - usuario: Nombre de usuario (puede cambiar si inicia sesión)
-
     try:
         if not usuario:
-            print("Para ver tu historial de compras debes iniciar sesión.")
-            accion = input("¿Desea hacerlo? Ingrese si o no: ").capitalize()
-            if accion == "Si":
-                usuario = iniciar_sesion(archivo_json='comprador/usuarios.json', usuario=usuario)
-            else:
-                print("Muchas gracias")
-                input("Presione Enter para continuar")
-                return usuario
+            # Este bloque solo se ejecuta si se llama independientemente
+            if mostrar_historial:
+                print("Para ver tu historial de compras debes iniciar sesión.")
+                accion = input("¿Desea hacerlo? Ingrese si o no: ").capitalize()
+                if accion == "Si":
+                    usuario = iniciar_sesion(archivo_json='comprador/usuarios.json', usuario=usuario)
+                else:
+                    print("Muchas gracias")
+                    input("Presione Enter para continuar")
+                    return usuario
 
         if usuario:       
             # Intentar leer el archivo existente
@@ -676,25 +719,27 @@ def historial_compras(historial_carrito, usuario):
             with open("historial.json", "w") as archivo:
                 json.dump(historial, archivo, indent=4)
             
-            # Mostrar el historial actualizado
-            print(f"\nHistorial de compras para el usuario {usuario}:")
-            print("-" * 50)
+            # Mostrar el historial solo si mostrar_historial es True
+            if mostrar_historial:
+                print(f"\nHistorial de compras para el usuario {usuario}:")
+                print("-" * 50)
 
-            entrada_usuario = next((entrada for entrada in historial if entrada["usuario"] == usuario), None)
-            if entrada_usuario:
-                total_gastado = 0
-                for num_compra, detalles in entrada_usuario["compras"].items():
-                    subtotal = detalles["cantidad"] * detalles["precio"]
-                    total_gastado += subtotal
-                    print(f"Compra #{num_compra}:")
-                    print(f"  Producto: {detalles['producto']}")
-                    print(f"  Cantidad: {detalles['cantidad']}")
-                    print(f"  Precio unitario: ${detalles['precio']:.2f}")
-                    print(f"  Subtotal: ${subtotal:.2f}")
-                    print("-" * 30)
-                print(f"Total gastado: ${total_gastado:.2f}")
+                entrada_usuario = next((entrada for entrada in historial if entrada["usuario"] == usuario), None)
+                if entrada_usuario:
+                    total_gastado = 0
+                    for num_compra, detalles in entrada_usuario["compras"].items():
+                        subtotal = detalles["cantidad"] * detalles["precio"]
+                        total_gastado += subtotal
+                        print(f"Compra #{num_compra}:")
+                        print(f"  Producto: {detalles['producto']}")
+                        print(f"  Cantidad: {detalles['cantidad']}")
+                        print(f"  Precio unitario: ${detalles['precio']:.2f}")
+                        print(f"  Subtotal: ${subtotal:.2f}")
+                        print("-" * 30)
+                    print(f"Total gastado: ${total_gastado:.2f}")
 
-            input("Presione Enter para continuar")
+                if mostrar_historial:
+                    input("Presione Enter para continuar")
         return usuario
 
     except IOError as e:  # Error de archivo

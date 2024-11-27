@@ -41,25 +41,38 @@ carrito = []
 def menu_vendedor():
     os.system('cls')
     print()
-    print("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------")
-    print("                                                       Bienvenido al E-Commerce!!! ")
+    print("======================================")
+    print("     Bienvenido al E-Commerce!!! ")
+    print("======================================")
     print("")
     print('''Estas son las opciones disponibles: 
-    1. Agregar un Producto || 2. Ver Stock || 3. Editar Producto || 4. Eliminar Producto || 5. Estadísticas || 6. Ver Pedidos || 7. Ver Papelera || 8. Eliminar Pedidos || 9. Ir a Comprador ''')
-    print("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------")
+    1. Agregar un Producto
+    2. Ver Stock
+    3. Editar Producto
+    4. Eliminar Producto
+    5. Estadísticas
+    6. Ver Pedidos
+    7. Ver Papelera
+    8. Eliminar Pedidos
+    9. Ir a Comprador ''')
 
 
 
 def menu_comprador():
     os.system('cls')
     print()
-    print("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------")
-                                                                                                                                                                                                            
-    print("                                                     Bienvenido al E-Commerce!!! ")
+    print("======================================")                                                                                                                                                                        
+    print("     Bienvenido al E-Commerce!!! ")
+    print("======================================")
     print("")
     print('''Estas son las opciones disponibles: 
-    1. Comprar Productos || 2. Buscar Producto || 3. Detalles de Productos || 4. Carrito || 5. Historial Compra || 6. Iniciar Session || 7. Ir a Administrador''')
-    print("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------")
+    1. Comprar Productos
+    2. Buscar Producto
+    3. Detalles de Productos
+    4. Carrito
+    5. Historial Compra
+    6. Iniciar Session
+    7. Ir a Administrador''')
 
 
 def obtener_opcion_valida(min_valor, max_valor):
