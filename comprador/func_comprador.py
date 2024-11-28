@@ -125,34 +125,29 @@ def comprar_producto(producto, carrito):
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-
 def ver_productos(producto_aux):
-   """
-   Muestra los productos disponibles en stock, 
-   con un formato de impresión organizado en bloques de 5 productos.
-   """
-   # Parámetros de entrada:
+    """
+    Muestra los productos disponibles en stock en un formato de tabla.
+    """
+    # Parámetros de entrada:
     # - producto_aux: Lista de productos con [nombre, stock, precio]
 
     # Parámetro de salida:
-    # - Impresión en pantalla de productos con stock disponible
+    # - Impresión en pantalla de productos con stock disponible en formato de tabla
 
-   print()
-   print("Productos: ")
-   if producto_aux == []:
-       print("No hay productos en stock")
-   else:
-       contador = 0
-       for i in producto_aux:
-           if i[1] > 0:
-               print(f"{i[0]}, {i[1]}, ${i[2]}", end=" | ")
-               contador += 1
-               if contador % 5 == 0:  # Cada 5 productos, imprime una nueva línea
-                   print("")
-                   print("")
-       if contador % 5 != 0:  # Si el último bloque no tiene exactamente 5 productos, termina la línea.
-           print("")
+    print()
+    print("Productos:")
+    print("-" * 60)
+    print("{:<30} {:<10} {:<10}".format("Nombre", "Stock", "Precio"))
+    print("-" * 60)
 
+    if not producto_aux:
+        print("No hay productos en stock.")
+    else:
+        for producto in producto_aux:
+            if producto[1] > 0:
+                print("{:<30} {:<10} ${:<10.2f}".format(producto[0], producto[1], producto[2]))
+    print("-" * 60)
 
 
 def buscar_producto_similar(producto, carrito):
@@ -166,7 +161,7 @@ def buscar_producto_similar(producto, carrito):
 
     # Parámetro de salida:
     # - carrito: Carrito de compras actualizado después de una posible compra
-
+   encontrado = False
    nombre_buscar = input("Ingrese el nombre del producto que desea buscar: ")
    nombre_buscar = nombre_buscar.lower()
 
@@ -179,9 +174,12 @@ def buscar_producto_similar(producto, carrito):
                contador += 1
 
        if contador > (len(nombre_buscar) // 2):
+           encontrado = True
            print(f"Posible coincidencia encontrada: {j[0]} con {contador} coincidencias.")
 
            comprar = input(f"Desea comprar el siguiente producto: {j[0]}, ingrese si o no: ").lower()
+           while comprar != "si" and comprar != "no":
+                comprar = input(f"Ingrese una opcion valida (si o no): ").lower()
 
            if comprar == "si":
                print(f'Ingrese el nombre "{j[0]}" correctamente a continuacion..')
@@ -189,6 +187,11 @@ def buscar_producto_similar(producto, carrito):
            else:
                print("Muchas Gracias")
                input("Presione Enter para continuar")
+    
+
+   if encontrado == False:
+        print("No se encontro ningun producto")
+        input("Presione Enter para continuar")
 
    return carrito
 
@@ -293,7 +296,7 @@ def detalles_productos():
            
            # Si no se encuentra el producto en el archivo
            print(f"Lo siento, no se encontró el producto '{producto_buscado}' en la lista.")
-       
+           input("Presione Enter para continuar")
    except Exception:
        print("El archivo no fue encontrado.")
 
@@ -325,12 +328,14 @@ def gestionar_carrito(carrito, monto_total, producto, usuario):
        opcion = "5"
        print("")
        print("El carrito está vacío.")
-   
+       input("Presione Enter para continuar")
+
    while opcion != "5":
        if not carrito:
            print("")
            print("El carrito está vacío.")
            opcion = "5"
+           input("Presione Enter para continuar")
        else:
            print("\nCarrito actual:")
            for i in range(len(carrito)):
@@ -531,6 +536,8 @@ def iniciar_sesion(archivo_json, usuario):
     if usuario:
         print("Usted ya ha iniciado sesión!")
         accion = input("¿Desea cerrar sesión? si o no: ").capitalize()
+        while accion != "Si" and accion != "No":
+            accion = input("Ingrese una accion valida (si o no): ").capitalize()
         if accion == "Si":
             usuario = ""
             print("Se cerró sesión correctamente.")
@@ -645,7 +652,7 @@ def pago(carrito, usuario):
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-def historial_compras(historial_carrito, usuario, mostrar_historial=True):
+def historial_compras(historial_carrito, usuario, mostrar_historial=True, actualizar_historial=True):
     """
     Gestiona el historial de compras de un usuario, 
     permitiendo registro y visualización de compras realizadas.
@@ -661,6 +668,9 @@ def historial_compras(historial_carrito, usuario, mostrar_historial=True):
             if mostrar_historial:
                 print("Para ver tu historial de compras debes iniciar sesión.")
                 accion = input("¿Desea hacerlo? Ingrese si o no: ").capitalize()
+                while accion != "Si" and accion != "No":
+                    accion = input("Ingrese una accion valida (si o no): ").capitalize()
+
                 if accion == "Si":
                     usuario = iniciar_sesion(archivo_json='comprador/usuarios.json', usuario=usuario)
                 else:
@@ -684,36 +694,39 @@ def historial_compras(historial_carrito, usuario, mostrar_historial=True):
                 ultimos_numeros = [int(k) for k in entrada_usuario["compras"].keys()]
                 ultimo_numero = max(ultimos_numeros) if ultimos_numeros else 0
 
+                
                 # Actualizar o agregar productos al historial del usuario
-                for producto, cantidad, precio in historial_carrito:
-                    for num_compra, detalles in entrada_usuario["compras"].items():
-                        if detalles["producto"] == producto:
-                            # Actualizar cantidad y precio si ya existe
-                            detalles["cantidad"] += cantidad
-                            detalles["precio"] = precio
-                            break
-                    else:
-                        # Producto nuevo
-                        ultimo_numero += 1
-                        entrada_usuario["compras"][str(ultimo_numero)] = {
-                            "producto": producto,
-                            "cantidad": cantidad,
-                            "precio": precio
-                        }
+                if actualizar_historial:
+                    for producto, cantidad, precio in historial_carrito:
+                        for num_compra, detalles in entrada_usuario["compras"].items():
+                            if detalles["producto"] == producto:
+                                # Actualizar cantidad y precio si ya existe
+                                detalles["cantidad"] += cantidad
+                                detalles["precio"] = precio
+                                break
+                        else:
+                            # Producto nuevo
+                            ultimo_numero += 1
+                            entrada_usuario["compras"][str(ultimo_numero)] = {
+                                "producto": producto,
+                                "cantidad": cantidad,
+                                "precio": precio
+                            }
             else:
                 # Si el usuario no existe, crear una nueva entrada
-                nueva_venta = {
-                    "compras": {
-                        str(i + 1): {
-                            "producto": producto,
-                            "cantidad": cantidad,
-                            "precio": precio
-                        }
-                        for i, (producto, cantidad, precio) in enumerate(historial_carrito)
-                    },
-                    "usuario": usuario
-                }
-                historial.append(nueva_venta)
+                if actualizar_historial:
+                    nueva_venta = {
+                        "compras": {
+                            str(i + 1): {
+                                "producto": producto,
+                                "cantidad": cantidad,
+                                "precio": precio
+                            }
+                            for i, (producto, cantidad, precio) in enumerate(historial_carrito)
+                        },
+                        "usuario": usuario
+                    }
+                    historial.append(nueva_venta)
             
             # Guardar el historial actualizado
             with open("historial.json", "w") as archivo:
