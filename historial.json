@@ -10,6 +10,11 @@
                 "producto": "Sprite",
                 "cantidad": 1,
                 "precio": 1000
+            },
+            "3": {
+                "producto": "Helado De Vainilla",
+                "cantidad": 2,
+                "precio": 500
             }
         },
         "usuario": "usuario_prueba"

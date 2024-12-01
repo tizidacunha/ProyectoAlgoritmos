@@ -482,10 +482,11 @@ def ver_compras():
             if eliminar == "Si":
                 Eliminar_pedido()
                         
-        input("Presione Enter para continuar")     
+        
     except (FileNotFoundError, json.JSONDecodeError):
         print("El archivo de pedidos esta vacio")
 
+    input("Presione Enter para continuar")     
 
 def Eliminar_pedido():
     
