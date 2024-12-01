@@ -628,7 +628,7 @@ def pago(carrito, usuario):
            usuario = iniciar_sesion(archivo_json='comprador/usuarios.json', usuario=usuario)
        
        historial_compras(carrito, usuario, mostrar_historial=False)
-    #    Gestion_de_pedidos(carrito, usuario)
+       Gestion_de_pedidos(carrito, usuario)
 
        print("Gracias por su compra!!")
        print("")
