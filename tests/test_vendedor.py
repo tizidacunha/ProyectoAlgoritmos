@@ -116,7 +116,8 @@ def test_estadisticas(): #EJECUTAR CON: pytest -s (para los inputs)
     banco = 100
     lista = [["Manzana",10,5],["Coca-cola",40,1000],["Sprite",40,1000]]
 
-    diccionario = estadisticas(banco,lista)
+    with patch('builtins.input', side_effect=["enter","enter"]):
+        diccionario = estadisticas(banco,lista)
     
     for clave,valor in diccionario.items():
         plata = diccionario.get("dinero") 
@@ -147,17 +148,53 @@ def test_error_papelera():
     lista = []
     
     with patch("builtins.input", side_effect=["abc",-1,"enter"]):
-        with patch("builtins.print") as mock_print:
+        with patch("builtins.print") as mock_print: 
             papelera(lista)
-            mock_print.assert_any_call("Debe seleccionar un numero de indice")  
+            mock_print.assert_any_call("Debe seleccionar un numero de indice") #verifico que se imprima este print al menos una vez 
     
 def test_json_vacio():
     """Simula un archivo JSON vacío."""
-    with patch("builtins.open", new_callable=mock_open, read_data="") as file:
-        with patch("builtins.print") as mock_print:
-            ver_compras()
-            mock_print.assert_called_once_with("El archivo de pedidos esta vacio")
+    with patch("builtins.open", new_callable=mock_open, read_data="") as file: #open para simular la apertura de un archivo
+        with patch("builtins.input", side_effect=["enter"]):
+            with patch("builtins.print") as mock_print:
+                ver_compras()
+                mock_print.assert_called_once_with("El archivo de pedidos esta vacio") #significa el bloque try-except esta funcionando
+            
+def test_eliminar_pedido():
+    
+    pedido = [{
+        "codigo de compra": 2873,
+        "compras": {
+            "1": {
+                "producto": "Manzana",
+                "cantidad": 10,
+                "precio": 5
+            },
+            "2": {
+                "producto": "Coca-cola",
+                "cantidad": 40,
+                "precio": 1000
+            }
+        },
+        "usuario": "mateo123"
+    }]
+    
+    try:
+        
+        with open("pedidos.json","w") as file:
+            json.dump(pedido,file,indent=4)
+    
+        with patch('builtins.input', side_effect=[2873,-1,"enter"]):
+            Eliminar_pedido()
+    
+        with open("pedidos.json","r") as file:
+            contenido = json.load(file)
+    
+    except IOError:
+        print("Fallo la prueba")
 
+    assert contenido == []   #verifico que se haya eliminado el contenido del archivo
+    
 
 
 
