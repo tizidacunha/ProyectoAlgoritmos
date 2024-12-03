@@ -2,73 +2,21 @@
     {
         "compras": {
             "1": {
-                "producto": "Manzana",
-                "cantidad": 8,
-                "precio": 100
+                "producto": "Juego De Ollas",
+                "cantidad": 20,
+                "precio": 30
             },
             "2": {
-                "producto": "Sprite",
-                "cantidad": 1,
-                "precio": 1000
+                "producto": "Juguete Lego",
+                "cantidad": 2,
+                "precio": 100
             },
             "3": {
-                "producto": "Helado De Vainilla",
-                "cantidad": 2,
-                "precio": 500
+                "producto": "Lampara De Escritorio",
+                "cantidad": 10,
+                "precio": 70
             }
         },
         "usuario": "usuario_prueba"
-    },
-    {
-        "compras": {
-            "1": {
-                "producto": "Juego de ollas",
-                "cantidad": 30,
-                "precio": 30
-            }
-        },
-        "usuario": "mateo"
-    },
-    {
-        "compras": {
-            "1": {
-                "producto": "Sprite",
-                "cantidad": 4,
-                "precio": 1000
-            },
-            "2": {
-                "producto": "Iphone 12",
-                "cantidad": 20,
-                "precio": 15
-            },
-            "3": {
-                "producto": "Planta Decorativa",
-                "cantidad": 1,
-                "precio": 100
-            },
-            "4": {
-                "producto": "Juguete Lego",
-                "cantidad": 3,
-                "precio": 100
-            },
-            "5": {
-                "producto": "Juego De Ollas",
-                "cantidad": 4,
-                "precio": 30
-            }
-        },
-        "usuario": "mate"
-    },
-    {
-        "compras": {},
-        "usuario": ""
-    },
-    {
-        "compras": {},
-        "usuario": "lol"
-    },
-    {
-        "compras": {},
-        "usuario": "tiziano"
     }
 ]
