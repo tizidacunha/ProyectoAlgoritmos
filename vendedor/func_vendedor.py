@@ -508,7 +508,7 @@ def ver_compras():
         print("El archivo de pedidos esta vacio")
 
     input("Presione Enter para continuar")     
-ver_compras()
+
 
 def Eliminar_pedido():
     
