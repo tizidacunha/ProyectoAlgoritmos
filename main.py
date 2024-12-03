@@ -125,7 +125,7 @@ def main(carrito, producto, dinero):
                 elif accion == 4:
                     dinero, carrito, producto, usuario = gestionar_carrito(carrito=carrito,monto_total=dinero, producto=producto, usuario=usuario)
                 elif accion == 5:
-                    usuario = historial_compras(carrito, usuario)
+                    usuario = historial_compras(carrito, usuario,mostrar_historial=True, actualizar_historial=False)
                 elif accion == 6:
                     usuario = iniciar_sesion(archivo_json='comprador/usuarios.json', usuario=usuario)
                 elif accion ==7:
