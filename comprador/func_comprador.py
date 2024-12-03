@@ -414,6 +414,9 @@ def gestionar_carrito(carrito, monto_total, producto, usuario):
                    
                    producto_eliminado = carrito.pop(numero_producto)
                    print(f"{producto_eliminado[0]} ha sido eliminado del carrito.")
+                   if carrito == []:
+                       opcion = "5"
+                       
                else:
                    print("Número de producto no válido.")
            
@@ -430,7 +433,7 @@ def gestionar_carrito(carrito, monto_total, producto, usuario):
                            break
                
                carrito.clear()
-               opcion = 4
+               opcion = "5"
 
                print("Todos los productos han sido eliminados del carrito y las cantidades han sido repuestas en la lista de productos.")
 
@@ -446,7 +449,7 @@ def gestionar_carrito(carrito, monto_total, producto, usuario):
            else:
                print("Opción no válida. Intente de nuevo.")
 
-       input("Presione Enter para continuar")
+   input("Presione Enter para continuar")
 
    return monto_total, carrito, producto, usuario
 
