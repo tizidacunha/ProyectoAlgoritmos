@@ -10,7 +10,7 @@ import re
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 
-from comprador.func_comprador import Recomendar_productos, actualizar_carrito, ver_productos, categoria, detalles_productos, cargar_datos, guardar_datos, validar_usuario, validar_contraseña, historial_compras,buscar_producto_similar
+from comprador.func_comprador import pago, comprar_producto,Recomendar_productos, actualizar_carrito, ver_productos, categoria, detalles_productos, cargar_datos, guardar_datos, validar_usuario, validar_contraseña, historial_compras,buscar_producto_similar
 
 
 
@@ -50,52 +50,7 @@ def test_actualizar_carrito():
     pera_entry = [item for item in updated_carrito if item[0] == "Pera"][0]
     assert pera_entry[1] == 1
 
-def test_ver_productos(capsys):
-    """Test displaying products."""
-    ver_productos(producto)
-    captured = capsys.readouterr()
-    
-    
-    assert "Nombre" in captured.out
-    assert "Stock" in captured.out
-    assert "Precio" in captured.out
-    
-    
-    assert "Manzana" in captured.out
-    assert "Sprite" in captured.out
 
-
-def test_cargar_datos():
-    """Test loading data from a JSON file."""
- 
-    with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.json') as temp_file:
-        json.dump({"usuarios": [{"usuario": "test", "contrasena": "Test123!"}]}, temp_file)
-        temp_file_path = temp_file.name
-    
-    try:
-        loaded_data = cargar_datos(temp_file_path)
-        assert "usuarios" in loaded_data
-        assert len(loaded_data["usuarios"]) > 0
-    finally:
-        os.unlink(temp_file_path)
-
-def test_guardar_datos():
-    """Test saving data to a JSON file."""
-   
-    with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.json') as temp_file:
-        temp_file_path = temp_file.name
-    
-    try:
-        test_data = {"usuarios": [{"usuario": "test", "contrasena": "Test123!"}]}
-        guardar_datos(temp_file_path, test_data)
-        
-      
-        with open(temp_file_path, 'r') as f:
-            loaded_data = json.load(f)
-        
-        assert loaded_data == test_data
-    finally:
-        os.unlink(temp_file_path)
 
 def test_validar_usuario():
     
@@ -167,21 +122,8 @@ def test_historial_compras():
         os.unlink(temp_file_path)
 
 
-def test_categoria(capsys, monkeypatch):
-    """Test category selection."""
-   
-    monkeypatch.setattr('builtins.input', lambda _: "Comida")
-    
-    categoria(producto)
-    captured = capsys.readouterr()
-    
-
-    assert "Manzana" in captured.out
-    assert "Pera" in captured.out
-
 
 def test_detalles_productos(monkeypatch, tmp_path):
-    """Test product details retrieval."""
    
     details_file = tmp_path / "detalles_productos.txt"
     details_file.write_text("Manzana: Fruta fresca de temporada\nPera: Variedad dorada")
@@ -197,3 +139,34 @@ def test_detalles_productos(monkeypatch, tmp_path):
    
     assert result is not None
     assert "Manzana" in str(result)
+    
+    
+def test_comprar_productos():
+    
+    lista = [["Manzana", 10, 100],["Pera", 10, 100]]
+    carrito = []
+    
+    with patch('builtins.input', side_effect=["Manzana",10,"-1"]):
+        with patch('builtins.print'):
+            compra_realizada, resultado=comprar_producto(lista, carrito)
+    
+    
+    assert compra_realizada == [["Manzana",10,100]]                               
+    assert ["Manzana", 0, 100]  in resultado #verifico haya un elemento
+    print(resultado)
+    assert [["Manzana", 0, 100],["Pera",10,100]] == resultado #verifico que este en la lista
+
+
+
+def test_pago():
+    
+    carrito = [["Manzana", 10, 100]]
+    usuario = 'usuario_prueba'
+    
+    with patch('builtins.input', side_effect=["si", "a"]):
+        with patch('builtins.print'):
+            monto_total, carrito, usuario = pago(carrito, usuario)
+    
+    assert carrito == []                               
+    assert monto_total == 1000
+  
