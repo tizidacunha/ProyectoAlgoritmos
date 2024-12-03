@@ -1,130 +1,29 @@
 [
     {
-        "codigo de compra": 1461,
+        "codigo de compra": 7989,
         "compras": {
             "1": {
-                "producto": "Manzana",
-                "cantidad": 10,
-                "precio": 5
-            },
-            "2": {
-                "producto": "Coca-cola",
-                "cantidad": 40,
-                "precio": 1000
+                "producto": "Juego De Ollas",
+                "cantidad": 20,
+                "precio": 30
             }
         },
-        "usuario": "mateo123"
+        "usuario": "usuario_prueba"
     },
     {
-        "codigo de compra": 4509,
+        "codigo de compra": 4316,
         "compras": {
             "1": {
-                "producto": "Manzana",
-                "cantidad": 10,
-                "precio": 5
+                "producto": "Juguete Lego",
+                "cantidad": 2,
+                "precio": 100
             },
             "2": {
-                "producto": "Coca-cola",
-                "cantidad": 40,
-                "precio": 1000
-            }
-        },
-        "usuario": "mateo123"
-    },
-    {
-        "codigo de compra": 8164,
-        "compras": {
-            "1": {
-                "producto": "Manzana",
+                "producto": "Lampara De Escritorio",
                 "cantidad": 10,
-                "precio": 5
-            },
-            "2": {
-                "producto": "Coca-cola",
-                "cantidad": 40,
-                "precio": 1000
+                "precio": 70
             }
         },
-        "usuario": "mateo123"
-    },
-    {
-        "codigo de compra": 5325,
-        "compras": {
-            "1": {
-                "producto": "Manzana",
-                "cantidad": 10,
-                "precio": 5
-            },
-            "2": {
-                "producto": "Coca-cola",
-                "cantidad": 40,
-                "precio": 1000
-            }
-        },
-        "usuario": "mateo123"
-    },
-    {
-        "codigo de compra": 4519,
-        "compras": {
-            "1": {
-                "producto": "Manzana",
-                "cantidad": 10,
-                "precio": 5
-            },
-            "2": {
-                "producto": "Coca-cola",
-                "cantidad": 40,
-                "precio": 1000
-            }
-        },
-        "usuario": "mateo123"
-    },
-    {
-        "codigo de compra": 6771,
-        "compras": {
-            "1": {
-                "producto": "Manzana",
-                "cantidad": 10,
-                "precio": 5
-            },
-            "2": {
-                "producto": "Coca-cola",
-                "cantidad": 40,
-                "precio": 1000
-            }
-        },
-        "usuario": "mateo123"
-    },
-    {
-        "codigo de compra": 2550,
-        "compras": {
-            "1": {
-                "producto": "Manzana",
-                "cantidad": 10,
-                "precio": 5
-            },
-            "2": {
-                "producto": "Coca-cola",
-                "cantidad": 40,
-                "precio": 1000
-            }
-        },
-        "usuario": "mateo123"
-    },
-    {
-        "codigo de compra": 3221,
-        "compras": {
-            "1": {
-                "producto": "Manzana",
-                "cantidad": 10,
-                "precio": 5
-            },
-            "2": {
-                "producto": "Coca-cola",
-                "cantidad": 40,
-                "precio": 1000
-            }
-        },
-        "usuario": "mateo123"
+        "usuario": "usuario_prueba"
     }
 ]

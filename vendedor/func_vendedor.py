@@ -326,7 +326,7 @@ def estadisticas(banco,lista):
         print("No hay productos en el almacen")
     
     for clave,valor in estadisticas.items():
-        print(clave,";",valor)
+        print(clave,":",valor)
         
     input("Presione Enter para continuar")
     return estadisticas
@@ -442,34 +442,13 @@ def ver_compras():
             
             es_numero = False
             while es_numero == False:
-                try:
-                    codigo = int(input("Ingrese el codigo del pedido que desee ver o -1 para salir: "))
-                    print()
-                    es_numero = True
-                except ValueError:
-                    print("Ingrese un numero entero de los que se le imprimio en pantalla")
-                    print()
-                    
-            while codigo != -1:
-                existe = False         
-                                                
-                for i in compras:
-                    for clave,valor in i.items(): #i = diccionarios dentro de la lista grande del json
-                            
-                        if clave == "codigo de compra":
-                            codigos = valor
-                        
-                        if codigos == codigo:
-                            print(f"{clave}: {valor} ")
-                            print()
-                            existe = True
                 
-                if existe == False:
-                    print(f"El codigo: #{codigo} no existe")
-                        
-                        
-                es_numero = False
-                while es_numero == False:
+                if compras == []:
+                    
+                    print("No hay pedidos disponibles")
+                    break
+                    
+                else:
                     try:
                         codigo = int(input("Ingrese el codigo del pedido que desee ver o -1 para salir: "))
                         print()
@@ -478,15 +457,58 @@ def ver_compras():
                         print("Ingrese un numero entero de los que se le imprimio en pantalla")
                         print()
             
-            eliminar = input("Desea eliminar algun pedido? ingrese si o no: ").capitalize()
-            if eliminar == "Si":
-                Eliminar_pedido()
+            if not compras == []:
+            
+                while codigo != -1:
+                    existe = False         
+                                                    
+                    for i in compras:
+                        for clave,valor in i.items(): #i = diccionarios dentro de la lista grande del json
+                                
+                            if clave == "codigo de compra":
+                                codigos = valor
+                            
+                            if codigos == codigo:
+                                if clave == "compras":
+                                    for indice,contenido in valor.items(): #itera los distintos indices por producto, luego entra a cada producto
+                                        print(f"-{indice}")
+                                        print()
+                                        for pedido,compra in contenido.items(): #va iterando en nombre producto precio
+                                            print(pedido,":",compra)
+                                            print()
+                                            
+                                        
+                                
+                                else:
+                                    print(f"{clave} : {valor} ")
+                                    print()
+                                    existe = True
+                    
+                    if existe == False:
+                        print(f"El codigo: #{codigo} no existe")
+                            
+                            
+                    es_numero = False
+                    while es_numero == False:
+                        try:
+                            codigo = int(input("Ingrese el codigo del pedido que desee ver o -1 para salir: "))
+                            print()
+                            es_numero = True
+                        except ValueError:
+                            print("Ingrese un numero entero de los que se le imprimio en pantalla")
+                            print()
+                
+                
+                eliminar = input("Desea eliminar algun pedido? ingrese si o no: ").capitalize()
+                if eliminar == "Si":
+                    Eliminar_pedido()
                         
         
     except (FileNotFoundError, json.JSONDecodeError):
         print("El archivo de pedidos esta vacio")
 
     input("Presione Enter para continuar")     
+ver_compras()
 
 def Eliminar_pedido():
     
